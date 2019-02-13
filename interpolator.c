@@ -34,7 +34,7 @@ void prvInterpolator_Task(void *args)
             uint32_t i;
             for(i = 0; i < AXIS_COUNT; i++)
             {
-                axis_steps[i] = motion.total / 2;
+                axis_steps[i] = motion.total >> 1;
             }
 
             //Enable stepper motors
@@ -103,6 +103,7 @@ void prvInterpolator_Task(void *args)
 
             //Done with this motion, disable stepper motors
             GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, HIGH);
+            Printer_Set(STATUS, READY, NULL);
         }
         else
         {

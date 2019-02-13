@@ -1,75 +1,19 @@
 #include "motion.h"
 
-uint16_t directionPinMask(uint32_t axis)
-{
-    switch(axis)
-    {
-    case 0:
-        return X_DIR;
-    case 1:
-        return Y_DIR;
-    case 2:
-        return Z_DIR;
-    case 3:
-        return E_DIR;
-    default:
-        return 0;
-    }
-}
-
-uint16_t stepPinMask(uint32_t axis)
-{
-    switch(axis)
-    {
-    case 0:
-        return X_STEP;
-    case 1:
-        return Y_STEP;
-    case 2:
-        return Z_STEP;
-    case 3:
-        return E_STEP;
-    default:
-        return 0;
-    }
-}
-
-uint16_t enablePinMask(uint32_t axis)
-{
-    switch(axis)
-    {
-    case 0:
-        return X_EN;
-    case 1:
-        return Y_EN;
-    case 2:
-        return Z_EN;
-    case 3:
-        return E_EN;
-    default:
-        return 0;
-    }
-}
-
-uint16_t limitPinMask(uint32_t axis)
-{
-    switch(axis)
-    {
-    case 0:
-        return X_LIMIT;
-    case 1:
-        return Y_LIMIT;
-    case 2:
-        return Z_LIMIT;
-    default:
-        return 0;
-    }
-}
+uint16_t Direction_PinMask[AXIS_COUNT] = {X_DIR, Y_DIR, Z_DIR, E_DIR};
+uint16_t Step_PinMask[AXIS_COUNT] = {X_STEP, Y_STEP, Z_STEP, E_STEP};
+uint16_t Enable_PinMask[AXIS_COUNT] = {X_EN, Y_EN, Z_EN, E_EN};
+uint16_t Limit_PinMask[AXIS_COUNT - 1] = {X_LIMIT, Y_LIMIT, Z_LIMIT};
 
 uint8_t limits_mask;
+uint32_t i;
+uint32_t axisg;
+float coordinates[AXIS_COUNT - 1] = {0.0};
+float backoff[AXIS_COUNT - 1] = {0.0};
 
 void GPIO_Port6Callback(void *pvParameter1, uint32_t ulParameter2)
 {
+    //if limit was hit disable stepper motor in the corresponding axis
     switch(ulParameter2)
     {
     case X_LIMIT:
@@ -88,17 +32,31 @@ void GPIO_Port6Callback(void *pvParameter1, uint32_t ulParameter2)
 
     if(!limits_mask)
     {
+        //Stop this motion
         Printer_Set(STATUS, STOP, NULL);
+
+        //Re-enable stepper motors
+        GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, LOW);
+
+        //Set current coordinates to 0 if axis was homed
+        for(i = 0; i < AXIS_COUNT - 1; i++)
+        {
+            if(axisg & BIT_SHIFT(i))
+            {
+                coordinates[i] = 0.0;
+                Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
+            }
+        }
+
+        //Backoff so we are not hitting the limit switch
+        Motion_Linear(backoff, 700);
     }
 }
 
 void Motion_Home(uint32_t axis)
 {
-    uint32_t i;
     limits_mask = 0;
-
-    float coordinates[AXIS_COUNT - 1] = {0.0};
-    float backoff[AXIS_COUNT - 1] = {0.0};
+    axisg = axis;
 
     for(i = 0; i < AXIS_COUNT - 1; i++)
     {
@@ -107,7 +65,7 @@ void Motion_Home(uint32_t axis)
             //home this axis
             coordinates[i] = -200.0;
             backoff[i] = 10.0;
-            limits_mask |= limitPinMask(i);
+            limits_mask |= Limit_PinMask[i];
         }
         else
         {
@@ -118,22 +76,6 @@ void Motion_Home(uint32_t axis)
     }
 
     Motion_Linear(coordinates, MAX_FEEDRATE);
-
-    while(limits_mask);
-
-    GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, LOW);
-
-    for(i = 0; i < AXIS_COUNT - 1; i++)
-    {
-        if(axis & BIT_SHIFT(i))
-        {
-            coordinates[i] = 0.0;
-            Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
-        }
-    }
-
-
-    Motion_Linear(backoff, 500);
 }
 
 void Motion_Linear(float *new_coordinates, float feedrate)
@@ -153,7 +95,7 @@ void Motion_Linear(float *new_coordinates, float feedrate)
 
         if(target[i] < current[i])
         {
-            motion.direction |= directionPinMask(i);
+            motion.direction |= Direction_PinMask[i];
         }
 
         motion.total = MAX(motion.total, motion.steps[i]);
@@ -162,6 +104,8 @@ void Motion_Linear(float *new_coordinates, float feedrate)
 
     frequency = (feedrate * STEPS_PER_MM) / 60;
     motion.delay = 48000000/frequency;
+
+    //Acceleration profile calculations here
 
     Printer_Set(STATUS, BUSY, NULL);
 
@@ -173,7 +117,7 @@ void Motion_Linear(float *new_coordinates, float feedrate)
     else
     {
         //Queue is full yield CPU
-        MSPrintf(UART0, "Error: Motion queue took longer than expected\r\n");
+        MSPrintf(UART0, "Error: Motion queue took longer than expected\n");
         taskYIELD();
     }
 }

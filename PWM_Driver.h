@@ -17,6 +17,6 @@
 
 void PWM_Open(uint32_t pwm);
 void PWM_SetFrequency(uint32_t pwm, uint32_t frequency);
-void PWM_SetDutyCycle(uint32_t pwm, uint32_t duty);
+void PWM_SetDutyCycle(uint32_t pwm, uint16_t duty);
 
 #endif /* PWM_DRIVER_H_ */

@@ -46,10 +46,10 @@ void Interpreter_Run(struct sBlock block)
         switch(*(uint32_t*)Printer_Get(MODAL, 7))
         {
         case SPINDLE_STOP:
-            PWM_SetDutyCycle(PWM0, 0);
+            PWM_SetDutyCycle(PWM1, 0);
             break;
         case SPINDLE_CLOCKWISE:
-            PWM_SetDutyCycle(PWM0, *(float*)Printer_Get(SPINDLE, NULL));
+            PWM_SetDutyCycle(PWM1, *(uint32_t*)Printer_Get(SPINDLE, NULL));
             break;
         }
     }

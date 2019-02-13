@@ -34,7 +34,7 @@ struct sBlock
     uint32_t checksum;
     float coordinates[AXIS_COUNT];
     float feedrate;
-    float spindle;
+    int32_t spindle;
     float delay;
 };
 

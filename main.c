@@ -22,15 +22,17 @@ void main(void)
     GPIO_SetCallback(LIMITS_PORT, X_LIMIT|Y_LIMIT|Z_LIMIT, GPIO_Port6Callback);
 
     //For spindle, laser or other crazy stuff
-    PWM_Open(PWM0);
+    PWM_Open(PWM1);
 
     //Timer for step generation
     Timer32_Open(TIMER0);
 
+    //Create tasks
     xTaskCreate(prvCommunications_Task, "Communications", 128, NULL, tskIDLE_PRIORITY, NULL);
     xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY, Interpreter_GetTaskHandle());
-    xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY+1, Interpolator_GetTaskHandle());
+    xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY, Interpolator_GetTaskHandle());
 
+    //Start the RTOS
     vTaskStartScheduler();
 
     while(1);

@@ -11,7 +11,7 @@ struct sBlock parse(struct sToken *tokens, uint32_t count)
     /*Set both feedrate, spindle and delay to negative, this is just to check whether there is a
      * valid F, S or P letter
      */
-    block.spindle = -1.0;
+    block.spindle = -1;
     block.feedrate = -1.0;
     block.delay = -1.0;
 

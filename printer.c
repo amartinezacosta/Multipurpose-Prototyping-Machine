@@ -23,8 +23,6 @@ void Printer_Init(void)
     //Assume that the printer is ready to perform motion
     Printer.status = READY;
 
-    Printer.axis_lock |= (X_STEP|Y_STEP|Z_STEP|E_STEP);
-
     Printer.motion_queue = xQueueCreate(MOTION_QUEUE_SIZE, sizeof(struct sMotion));
 }
 
@@ -42,16 +40,13 @@ void Printer_Set(uint32_t param1, uint32_t param2, void *value)
         Printer.feedrate = *(float*)value;
         break;
     case SPINDLE:
-        Printer.spindle = *(float*)value;
+        Printer.spindle = *(uint32_t*)value;
         break;
     case MODAL:
         Printer.modal[param2] = *(uint32_t*)value;
         break;
     case STATUS:
         Printer.status = param2;
-        break;
-    case AXIS_LOCK:
-        Printer.axis_lock = param2;
         break;
     }
 }
@@ -88,9 +83,6 @@ void *Printer_Get(uint32_t param1, uint32_t param2)
         break;
     case MOTION_QUEUE:
         value = &Printer.motion_queue;
-        break;
-    case AXIS_LOCK:
-        value = &Printer.axis_lock;
         break;
     }
 

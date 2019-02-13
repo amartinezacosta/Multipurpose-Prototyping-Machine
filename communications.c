@@ -27,7 +27,7 @@ static void UART0_Callback(void *pvParameter1, uint32_t ulParameter2)
         }
         else
         {
-            //Queue congestion! A packet is taking longer than expected to run
+            //Queue congestion! A packet is taking longer than expected to be processed
             MSPrintf(UART0, "Error: Packet queue timeout\r\n", packet.data);
         }
         break;
