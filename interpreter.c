@@ -152,6 +152,12 @@ void Interpreter_Run(struct sBlock block)
         {
             //temperature_send()
         }
+
+        else if(block.non_modal[i] == SEND_POSITION)
+        {
+            float *coordinates = (float*)Printer_Get(CURRENT_COORDINATES, NULL);
+            MSPrintf(UART0, "ok C: X:%i Y:%i Z:%i E:%i\n", (uint32_t)coordinates[0], (uint32_t)coordinates[1], (uint32_t)coordinates[2],(uint32_t)coordinates[3]);
+        }
     }
 
 

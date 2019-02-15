@@ -1,18 +1,17 @@
 #include "motion.h"
 
 uint16_t Direction_PinMask[AXIS_COUNT] = {X_DIR, Y_DIR, Z_DIR, E_DIR};
-uint16_t Step_PinMask[AXIS_COUNT] = {X_STEP, Y_STEP, Z_STEP, E_STEP};
-uint16_t Enable_PinMask[AXIS_COUNT] = {X_EN, Y_EN, Z_EN, E_EN};
+//uint16_t Step_PinMask[AXIS_COUNT] = {X_STEP, Y_STEP, Z_STEP, E_STEP};
+//uint16_t Enable_PinMask[AXIS_COUNT] = {X_EN, Y_EN, Z_EN, E_EN};
 uint16_t Limit_PinMask[AXIS_COUNT - 1] = {X_LIMIT, Y_LIMIT, Z_LIMIT};
 
-uint8_t limits_mask;
-uint32_t axisg = 0;
-float coordinates[AXIS_COUNT - 1] = {0.0};
-float backoff[AXIS_COUNT - 1] = {0.0};
 
-void GPIO_Port6Callback(void *pvParameter1, uint32_t ulParameter2)
+bool homing = false;
+
+void GPIO_LimitsCallback(void *pvParameter1, uint32_t ulParameter2)
 {
-    //if limit was hit disable stepper motor on the corresponding axis
+    Printer_Set(STATUS, STOP, NULL);
+
     switch(ulParameter2)
     {
     case X_LIMIT:
@@ -29,25 +28,30 @@ void GPIO_Port6Callback(void *pvParameter1, uint32_t ulParameter2)
 
 void Motion_Home(uint32_t axis)
 {
-    limits_mask = 0;
-    //axisg = axis;
-
-    memcpy(coordinates, Printer_Get(CURRENT_COORDINATES, NULL),3*sizeof(float));
-    //memcpy(backoff, Printer_Get(CURRENT_COORDINATES, NULL),3*sizeof(float));
+    float coordinates[AXIS_COUNT-1] = {0.0};
+    float backoff[AXIS_COUNT-1] = {0.0};
 
     uint32_t i;
     for(i = 0; i < AXIS_COUNT - 1; i++)
     {
         if(axis & BIT_SHIFT(i))
         {
-            //home this axis
-            coordinates[i] = -210.0;
-            backoff[i] = 10.0;
+            memcpy(coordinates, Printer_Get(CURRENT_COORDINATES, NULL), 3*sizeof(float));
+            memcpy(backoff, Printer_Get(CURRENT_COORDINATES, NULL), 3*sizeof(float));
 
-            //Queue line to home axis
-            Motion_Linear(coordinates, MAX_FEEDRATE);
-            //Assume axis will home
+            //keep current coordinates, change only this axis
+            coordinates[i] = -MAX_TRAVEL;
+            Motion_Linear(coordinates, 4000);
+            //Assume we hit home axis, set axis current coordinate to 0
             coordinates[i] = 0.0;
+            Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
+
+            //Backoff from limit switch
+            backoff[i] = BACKOFF;
+            Motion_Linear(backoff, 2000);
+
+            //Go towards limit again
+            Motion_Linear(coordinates, 2000);
         }
     }
 }

@@ -24,7 +24,7 @@ struct sMotion
 
 void Motion_Linear(float *new_coordinates, float feedrate);
 void Motion_Home(uint32_t axis);
-void GPIO_Port6Callback(void *pvParameter1, uint32_t ulParameter2);
+void GPIO_LimitsCallback(void *pvParameter1, uint32_t ulParameter2);
 
 
 #endif /* MOTION_H_ */

@@ -18,14 +18,14 @@ void main(void)
     GPIO_Write(DIR_PORT, X_DIR|Y_DIR|Z_DIR|E_DIR, LOW);
     GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, HIGH);
 
-    //Open gpios for limit switches
+    //Open gpios for limit switches, set callback
     GPIO_Open(LIMITS_PORT, X_LIMIT|Y_LIMIT|Z_LIMIT, false);
-    GPIO_SetCallback(LIMITS_PORT, X_LIMIT|Y_LIMIT|Z_LIMIT, GPIO_Port6Callback);
+    GPIO_SetCallback(LIMITS_PORT, X_LIMIT|Y_LIMIT|Z_LIMIT, GPIO_LimitsCallback);
 
     //For spindle, laser or other crazy stuff
     PWM_Open(PWM1);
 
-    //Timer for step generation
+    //Timer for stepper motor pulse generation generation
     Timer32_Open(TIMER0);
 
     //Create tasks

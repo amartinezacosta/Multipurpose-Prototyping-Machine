@@ -39,6 +39,7 @@ static void UART0_Callback(void *pvParameter1, uint32_t ulParameter2)
 
 void prvCommunications_Task(void *args)
 {
+    /*Open backchannel UART for PC communication, set callback*/
     UART_Open(UART0);
     UART_SetCallback(UART0, UART0_Callback);
 

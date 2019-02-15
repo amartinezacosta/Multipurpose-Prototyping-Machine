@@ -5,7 +5,8 @@
 #define MIN_FEEDRATE            100
 #define STEPS_PER_MM            80
 #define AXIS_COUNT              4
-#define MAX_TRAVEL              500
+#define MAX_TRAVEL              210
+#define BACKOFF                 5
 
 #define MODAL_COUNT             13
 

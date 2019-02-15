@@ -19,6 +19,7 @@
 #define SEND_TEMPERATURE            0
 #define DWELL                       1
 #define HOME                        2
+#define SEND_POSITION               3
 
 #define BIT_SHIFT(n)            (1<<n)
 
