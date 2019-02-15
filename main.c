@@ -1,6 +1,7 @@
 #include "communications.h"
 #include "interpreter.h"
 #include "interpolator.h"
+#include "control.h"
 
 void main(void)
 {
@@ -31,6 +32,7 @@ void main(void)
     xTaskCreate(prvCommunications_Task, "Communications", 128, NULL, tskIDLE_PRIORITY, NULL);
     xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY, Interpreter_GetTaskHandle());
     xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY, Interpolator_GetTaskHandle());
+    xTaskCreate(prvSystemControl_Task, "System Control", 128, NULL, tskIDLE_PRIORITY, NULL);
 
     //Start the RTOS
     vTaskStartScheduler();
