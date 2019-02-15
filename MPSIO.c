@@ -46,6 +46,71 @@ void PrintInteger(uint32_t UART, int integer)
     }
 }
 
+/*Thanks! https://github.com/grbl/grbl/blob/master/grbl/print.c */
+void PrintFloat(uint32_t UART, float n, uint8_t decimal_places)
+{
+  if (n < 0)
+  {
+      PrintChar(UART, '-');
+      n = -n;
+  }
+
+  uint8_t decimals = decimal_places;
+  while (decimals >= 2)
+  {
+      // Quickly convert values expected to be E0 to E-4.
+      n *= 100;
+      decimals -= 2;
+  }
+
+  if (decimals)
+  {
+      n *= 10;
+  }
+
+  // Add rounding factor. Ensures carryover through entire value.
+  n += 0.5;
+
+  // Generate digits backwards and store in string.
+  unsigned char buf[10];
+  uint8_t i = 0;
+  uint32_t a = (long)n;
+  // Place decimal point, even if decimal places are zero.
+  buf[decimal_places] = '.';
+
+  while(a > 0)
+  {
+    // Skip decimal point location
+    if (i == decimal_places)
+    {
+        i++;
+    }
+
+    // Get digit
+    buf[i++] = (a % 10) + '0';
+    a /= 10;
+  }
+
+  while (i < decimal_places)
+  {
+      // Fill in zeros to decimal point for (n < 1)
+     buf[i++] = '0';
+  }
+
+  // Fill in leading zero, if needed.
+  if (i == decimal_places)
+  {
+    i++;
+    buf[i++] = '0';
+  }
+
+  // Print the generated string.
+  for (; i > 0; i--)
+  {
+      UART_Write(UART, (uint8_t*)&buf[i-1], 1);
+  }
+}
+
 /*A basic printf for the MSP432. In order to use it properly you need to initialize the correct UART peripheral.
  * The following formats are supported:
  * %c = for char variables
@@ -54,12 +119,12 @@ void PrintInteger(uint32_t UART, int integer)
  * USAGE...
  *
  * MSPrintf(EUSCI_A0_BASE, "Formated string %c, %s, %i", character, string, integer)*/
-
 void MSPrintf(uint32_t UART, const char *fs, ...)
 {
     va_list valist;
     va_start(valist, fs);
     int i;
+    float f;
     char *s;
 
     while(*fs)
@@ -84,6 +149,10 @@ void MSPrintf(uint32_t UART, const char *fs, ...)
             case 'i':
                 i = va_arg(valist, int);
                 PrintInteger(UART, i);
+                break;
+            case 'f':
+                f = va_arg(valist, float);
+                PrintFloat(UART, f, 3);
                 break;
             }
 

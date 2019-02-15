@@ -1,8 +1,6 @@
 #include "motion.h"
 
 uint16_t Direction_PinMask[AXIS_COUNT] = {X_DIR, Y_DIR, Z_DIR, E_DIR};
-//uint16_t Step_PinMask[AXIS_COUNT] = {X_STEP, Y_STEP, Z_STEP, E_STEP};
-//uint16_t Enable_PinMask[AXIS_COUNT] = {X_EN, Y_EN, Z_EN, E_EN};
 uint16_t Limit_PinMask[AXIS_COUNT - 1] = {X_LIMIT, Y_LIMIT, Z_LIMIT};
 
 
@@ -36,13 +34,15 @@ void Motion_Home(uint32_t axis)
     {
         if(axis & BIT_SHIFT(i))
         {
-            memcpy(coordinates, Printer_Get(CURRENT_COORDINATES, NULL), 3*sizeof(float));
-            memcpy(backoff, Printer_Get(CURRENT_COORDINATES, NULL), 3*sizeof(float));
+            /*keep current coordinates, change coordinates of this axis*/
+            memcpy(coordinates, Printer_Get(CURRENT_COORDINATES, NULL), (AXIS_COUNT-1)*sizeof(float));
+            memcpy(backoff, Printer_Get(CURRENT_COORDINATES, NULL), (AXIS_COUNT-1)*sizeof(float));
 
-            //keep current coordinates, change only this axis
+            /*Go towards limit switch*/
             coordinates[i] = -MAX_TRAVEL;
             Motion_Linear(coordinates, 4000);
-            //Assume we hit home axis, set axis current coordinate to 0
+
+            /*Assume axis is going to hit the limit switch, set axis current coordinate to 0*/
             coordinates[i] = 0.0;
             Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
 
@@ -51,7 +51,7 @@ void Motion_Home(uint32_t axis)
             Motion_Linear(backoff, 2000);
 
             //Go towards limit again
-            Motion_Linear(coordinates, 2000);
+            //Motion_Linear(coordinates, 2000);
         }
     }
 }

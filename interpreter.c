@@ -156,7 +156,7 @@ void Interpreter_Run(struct sBlock block)
         else if(block.non_modal[i] == SEND_POSITION)
         {
             float *coordinates = (float*)Printer_Get(CURRENT_COORDINATES, NULL);
-            MSPrintf(UART0, "ok C: X:%i Y:%i Z:%i E:%i\n", (uint32_t)coordinates[0], (uint32_t)coordinates[1], (uint32_t)coordinates[2],(uint32_t)coordinates[3]);
+            MSPrintf(UART0, "ok C: X:%f Y:%f Z:%f E:%f\n", coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
         }
     }
 
