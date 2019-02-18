@@ -151,7 +151,7 @@ void MSPrintf(uint32_t UART, const char *fs, ...)
                 PrintInteger(UART, i);
                 break;
             case 'f':
-                f = va_arg(valist, float);
+                f = va_arg(valist, double);
                 PrintFloat(UART, f, 3);
                 break;
             }

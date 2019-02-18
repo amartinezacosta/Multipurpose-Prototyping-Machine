@@ -37,7 +37,14 @@ void Interpreter_Run(struct sBlock block)
 
     //5. select tool (T).
 
-    //6. change tool (M6).
+    //6. change tool (M6), set temperature for extruder here maybe?.
+    if(block.modal_flags & BIT_SHIFT(6))
+    {
+        if(block.spindle > -1)
+        {
+
+        }
+    }
 
     //7. spindle on or off (M3, M4, M5).
     if(block.modal_flags & BIT_SHIFT(7))
@@ -150,7 +157,8 @@ void Interpreter_Run(struct sBlock block)
 
         else if(block.non_modal[i] == SEND_TEMPERATURE)
         {
-            //temperature_send()
+            //float t = Temperature_Get();
+            //MSPrintf(UART0, "ok T:%f B:25.0", t);
         }
 
         else if(block.non_modal[i] == SEND_POSITION)
