@@ -29,10 +29,10 @@ void main(void)
     Timer32_Open(TIMER0);
 
     //Create tasks
-    xTaskCreate(prvCommunications_Task, "Communications", 128, NULL, tskIDLE_PRIORITY, NULL);
-    xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY, Interpreter_GetTaskHandle());
-    xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY, Interpolator_GetTaskHandle());
-    xTaskCreate(prvSystemControl_Task, "System Control", 128, NULL, tskIDLE_PRIORITY, NULL);
+    xTaskCreate(prvCommunications_Task, "Communications", 128, NULL, tskIDLE_PRIORITY+1, Communications_GetTaskHandle());
+    xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY+2, Interpreter_GetTaskHandle());
+    xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY+2, Interpolator_GetTaskHandle());
+    //xTaskCreate(prvSystemControl_Task, "System Control", 128, NULL, tskIDLE_PRIORITY+1, NULL);
 
     //Start the RTOS
     vTaskStartScheduler();

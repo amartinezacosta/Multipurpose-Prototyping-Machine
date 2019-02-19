@@ -2,6 +2,7 @@
 #define COMMUNICATIONS_H_
 
 #include "FreeRTOS.h"
+#include "task.h"
 #include "queue.h"
 #include "interpreter.h"
 #include "UART_Driver.h"
@@ -16,6 +17,7 @@ struct sPacket
 };
 
 void prvCommunications_Task(void *args);
+TaskHandle_t *Communications_GetTaskHandle(void);
 QueueHandle_t Communications_GetPacketQueue(void);
 
 #endif /* COMMUNICATIONS_H_ */

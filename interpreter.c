@@ -204,33 +204,24 @@ void prvInterpreter_Task(void *args)
 
     while(1)
     {
-        //We will receive a notification from the communications
-        if(ulTaskNotifyTake(pdTRUE, 0))
-        {
-            if(xQueueReceive(Communications_GetPacketQueue(), &packet, 0))
-            {
-                //MSPrintf(UART0, "Packet ID: %i\r\n", packet.id);
-                //MSPrintf(UART0, "Packet Data: %s\r\n", packet.data);
+        /*We will receive a notification from the communications*/
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        /*At this point we know there is something on the queue, no purpose on checking*/
+        xQueueReceive(Communications_GetPacketQueue(), &packet, portMAX_DELAY);
 
-                count = lexer(tokens, packet.data);
-                if(count)
-                {
-                    block = parse(tokens, count);
-                    Interpreter_Run(block);
-                }
-                else
-                {
-                    //Not tokens found in data packet
-                    MSPrintf(UART0, "Error: Unknown command: \"%s\"\n", packet.data);
-                }
-            }
+        count = lexer(tokens, packet.data);
+        if(count)
+        {
+            block = parse(tokens, count);
+            Interpreter_Run(block);
         }
         else
         {
-            //Port yield
-            taskYIELD();
+            //Not tokens found in data packet
+            MSPrintf(UART0, "Error: Unknown command: \"%s\"\n", packet.data);
         }
     }
+
 }
 /*------------------------------------------------------------------------------------------------------*/
 

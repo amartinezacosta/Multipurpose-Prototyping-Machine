@@ -25,7 +25,7 @@ void prvInterpolator_Task(void *args)
 
     while(1)
     {
-        if(xQueueReceive(*(QueueHandle_t*)Printer_Get(MOTION_QUEUE, NULL), &motion, 1))
+        if(xQueueReceive(*(QueueHandle_t*)Printer_Get(MOTION_QUEUE, NULL), &motion, portMAX_DELAY))
         {
             //There is something on the queue!
             memset(axis_steps, 0, AXIS_COUNT*sizeof(uint32_t));
@@ -49,7 +49,7 @@ void prvInterpolator_Task(void *args)
 
             while(total_steps != motion.total)
             {
-                if(ulTaskNotifyTake(pdTRUE, 0))
+                if(ulTaskNotifyTake(pdTRUE, portMAX_DELAY))
                 {
                     if(*(uint32_t*)Printer_Get(STATUS, NULL) == STOP)
                     {
@@ -93,11 +93,6 @@ void prvInterpolator_Task(void *args)
                     GPIO_Write(STEP_PORT, X_STEP|Y_STEP|Z_STEP|E_STEP, LOW);
 
                     Timer32_Start(TIMER0, motion.delay);
-                }
-                else
-                {
-                    //We are waiting for a task notify from the timer
-                    taskYIELD();
                 }
             }
 

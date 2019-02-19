@@ -34,6 +34,7 @@ uint32_t getToken(struct sToken *token, char *string)
         string++;
     }
 
+    //letter + real number
     if(is_alpha(*string))
     {
         token->token[i++] = *string++;
@@ -48,6 +49,16 @@ uint32_t getToken(struct sToken *token, char *string)
         else
         {
             return 0;
+        }
+    }
+
+    //{letter}
+    else if(is_alpha(*string))
+    {
+        token->token[i++] = *string++;
+        while(is_alpha(*string))
+        {
+            token->token[i++] = *string++;
         }
     }
 

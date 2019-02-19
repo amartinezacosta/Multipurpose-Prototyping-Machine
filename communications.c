@@ -1,5 +1,7 @@
 #include "communications.h"
 
+TaskHandle_t xCommunications_Task;
+
 QueueHandle_t Packets_Queue;
 
 static void UART0_Callback(void *pvParameter1, uint32_t ulParameter2)
@@ -21,15 +23,16 @@ static void UART0_Callback(void *pvParameter1, uint32_t ulParameter2)
         packet.id = id++;
         packet.data[available] = 0;
 
-        if(xQueueSend(Packets_Queue, &packet, QUEUE_DELAY))
-        {
-            //Packet was successfully queued, we are good! do nothing.
-        }
-        else
+        if(xQueueSend(Packets_Queue, &packet, QUEUE_DELAY) != pdPASS)
         {
             //Queue congestion! A packet is taking longer than expected to be processed
             MSPrintf(UART0, "Error: Packet queue timeout\r\n", packet.data);
         }
+        else
+        {
+            xTaskNotifyGive(xCommunications_Task);
+        }
+
         break;
     case TX_SEND_DONE:
         break;
@@ -47,17 +50,15 @@ void prvCommunications_Task(void *args)
 
     while(1)
     {
-        if(uxQueueMessagesWaiting(Packets_Queue))
-        {
+            ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
             /*There is something on the queue, notify interpreter task*/
             xTaskNotifyGive(*Interpreter_GetTaskHandle());
-        }
-        else
-        {
-            /*Nothing on the queue, yield*/
-            taskYIELD();
-        }
     }
+}
+
+TaskHandle_t *Communications_GetTaskHandle(void)
+{
+    return &xCommunications_Task;
 }
 
 QueueHandle_t Communications_GetPacketQueue(void)
