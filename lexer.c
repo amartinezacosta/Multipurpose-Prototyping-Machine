@@ -1,10 +1,5 @@
 #include "lexer.h"
 
-char peek(char *string)
-{
-    return *string++;
-}
-
 bool is_special(const char c)
 {
     return (c == '*' || c == '-' || c == '+' || c == '/' ||
@@ -34,7 +29,7 @@ uint32_t getToken(struct sToken *token, char *string)
         string++;
     }
 
-    //letter + real number
+    //letter + letter + real number
     if(is_alpha(*string))
     {
         token->token[i++] = *string++;
@@ -46,22 +41,17 @@ uint32_t getToken(struct sToken *token, char *string)
                 token->token[i++] = *string++;
             }
         }
+        else if(is_alpha(*string) || *string == '\r' || *string == '\n')
+        {
+
+        }
         else
         {
             return 0;
         }
     }
 
-    //{letter}
-    else if(is_alpha(*string))
-    {
-        token->token[i++] = *string++;
-        while(is_alpha(*string))
-        {
-            token->token[i++] = *string++;
-        }
-    }
-
+    //Comment
     else if(*string == '(')
     {
         token->token[i++] = *string;
@@ -76,6 +66,7 @@ uint32_t getToken(struct sToken *token, char *string)
         string++;
     }
 
+    //Comment
     else if(*string == ';')
     {
         token->token[i++] = *string++;

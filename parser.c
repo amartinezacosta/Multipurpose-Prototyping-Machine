@@ -147,7 +147,6 @@ struct sBlock parse(struct sToken *tokens, uint32_t count)
     }
 
     block.non_modal_count = j;
-
     return block;
 }
 

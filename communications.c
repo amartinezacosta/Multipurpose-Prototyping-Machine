@@ -1,8 +1,7 @@
 #include "communications.h"
-
-TaskHandle_t xCommunications_Task;
-
+/*DATA PACKET QUEUE HANDLE----------------------------------*/
 QueueHandle_t Packets_Queue;
+/*----------------------------------------------------------*/
 
 static void UART0_Callback(void *pvParameter1, uint32_t ulParameter2)
 {
@@ -30,7 +29,7 @@ static void UART0_Callback(void *pvParameter1, uint32_t ulParameter2)
         }
         else
         {
-            xTaskNotifyGive(xCommunications_Task);
+            xTaskNotifyGive(*Interpreter_GetTaskHandle());
         }
 
         break;
@@ -39,26 +38,12 @@ static void UART0_Callback(void *pvParameter1, uint32_t ulParameter2)
     }
 }
 
-
-void prvCommunications_Task(void *args)
+void Communications_Init(void)
 {
-    /*Open backchannel UART for PC communication, set callback*/
-    UART_Open(UART0);
     UART_SetCallback(UART0, UART0_Callback);
+    Packets_Queue = xQueueCreate(PACKETS_QUEUE_SIZE, sizeof(struct sPacket));
 
-    Packets_Queue = xQueueCreate(10, sizeof(struct sPacket));
-
-    while(1)
-    {
-            ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-            /*There is something on the queue, notify interpreter task*/
-            xTaskNotifyGive(*Interpreter_GetTaskHandle());
-    }
-}
-
-TaskHandle_t *Communications_GetTaskHandle(void)
-{
-    return &xCommunications_Task;
+    /*Callback for other communication channels here*/
 }
 
 QueueHandle_t Communications_GetPacketQueue(void)

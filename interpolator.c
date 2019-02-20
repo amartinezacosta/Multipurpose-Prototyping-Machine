@@ -38,10 +38,10 @@ void prvInterpolator_Task(void *args)
             }
 
             //Enable stepper motors
-            GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN, LOW);
+            GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, LOW);
 
             //Set direction of stepper motors
-            GPIO_Write(DIR_PORT, X_DIR|Y_DIR|Z_DIR|E_DIR, LOW);
+            GPIO_Write(DIR_PORT, X_DIR|Y_DIR|Z_DIR|E_DIR|E_DIR, LOW);
             GPIO_Write(DIR_PORT, motion.direction, HIGH);
 
             //Start timer, timeout 1 clock cycle

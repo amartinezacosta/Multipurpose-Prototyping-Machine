@@ -6,8 +6,8 @@
  * 4. execute the block instruction
  * 5. Notify host of success/failure of instruction
  *
- * This tasks depends on the prvCommunications_Task, since it will notify when there is a packet of data
- * available*/
+ * This tasks relies on notifications from a communication channel. We will receive a notification when there is a string in the
+ * data packets queue*/
 
 #include "interpreter.h"
 
@@ -206,7 +206,7 @@ void prvInterpreter_Task(void *args)
     {
         /*We will receive a notification from the communications*/
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-        /*At this point we know there is something on the queue, no purpose on checking*/
+        /*At this point we know there is something on the queue, no point in checking*/
         xQueueReceive(Communications_GetPacketQueue(), &packet, portMAX_DELAY);
 
         count = lexer(tokens, packet.data);

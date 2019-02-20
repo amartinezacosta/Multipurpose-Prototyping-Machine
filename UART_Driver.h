@@ -6,7 +6,7 @@
 #include "timers.h"
 
 #define UART_MODULE_COUNT       4
-#define UART_RX_BUFFER_SIZE     128
+#define UART_RX_BUFFER_SIZE     256
 #define UART_TX_BUFFER_SIZE     256
 
 #define RX_BUFFER_FULL  1

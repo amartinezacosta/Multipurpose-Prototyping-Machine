@@ -8,7 +8,11 @@ void main(void)
     //Initialize printer variables
     Printer_Init();
 
-    //Open gpios for stepper motors
+    //UART channel with PC host
+    UART_Open(UART0);
+    Communications_Init();
+
+    //Open GPIO for stepper motors
     GPIO_Open(STEP_PORT, X_STEP|Y_STEP|Z_STEP|E_STEP, true);
     GPIO_Open(DIR_PORT, X_DIR|Y_DIR|Z_DIR|E_DIR, true);
     GPIO_Open(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, true);
@@ -29,10 +33,9 @@ void main(void)
     Timer32_Open(TIMER0);
 
     //Create tasks
-    xTaskCreate(prvCommunications_Task, "Communications", 128, NULL, tskIDLE_PRIORITY+1, Communications_GetTaskHandle());
-    xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY+2, Interpreter_GetTaskHandle());
-    xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY+2, Interpolator_GetTaskHandle());
-    //xTaskCreate(prvSystemControl_Task, "System Control", 128, NULL, tskIDLE_PRIORITY+1, NULL);
+    //xTaskCreate(prvCommunications_Task, "Communications", 128, NULL, tskIDLE_PRIORITY+1, Communications_GetTaskHandle());
+    xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY, Interpreter_GetTaskHandle());
+    xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY+1, Interpolator_GetTaskHandle());
 
     //Start the RTOS
     vTaskStartScheduler();
