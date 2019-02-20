@@ -3,6 +3,7 @@
 QueueHandle_t Packets_Queue;
 /*----------------------------------------------------------*/
 
+/*Call backs for hardware communication channels should be placed in here*/
 static void UART0_Callback(void *pvParameter1, uint32_t ulParameter2)
 {
     struct sPacket packet;
@@ -40,8 +41,10 @@ static void UART0_Callback(void *pvParameter1, uint32_t ulParameter2)
 
 void Communications_Init(void)
 {
-    UART_SetCallback(UART0, UART0_Callback);
     Packets_Queue = xQueueCreate(PACKETS_QUEUE_SIZE, sizeof(struct sPacket));
+
+    /*Initiliaze UART callback*/
+    UART_SetCallback(UART0, UART0_Callback);
 
     /*Callback for other communication channels here*/
 }

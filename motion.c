@@ -87,15 +87,14 @@ void Motion_Linear(float *new_coordinates, float feedrate)
     Printer_Set(STATUS, BUSY, NULL);
 
     //Hold here until there is space on the queue
-    if(xQueueSend(*(QueueHandle_t*)Printer_Get(MOTION_QUEUE, NULL), &motion, 48000000*30))
+    if(xQueueSend(*(QueueHandle_t*)Printer_Get(MOTION_QUEUE, NULL), &motion, 48000000*30) != pdPASS)
     {
-        //queue free do nothing
+        //Motion Queue is taking longer than expected
+        MSPrintf(UART0, "Error: Motion took longer than expected\n");
     }
     else
     {
-        //Queue is full yield CPU
-        MSPrintf(UART0, "Error: Motion queue took longer than expected\n");
-        taskYIELD();
+        //Motion is in the queue
     }
 }
 
