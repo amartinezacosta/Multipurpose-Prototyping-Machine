@@ -8,8 +8,10 @@ bool homing = false;
 
 void GPIO_LimitsCallback(void *pvParameter1, uint32_t ulParameter2)
 {
+    /*Stop this toolpath instruction if limit switch is hit*/
     Printer_Set(STATUS, STOP, NULL);
 
+    /*Disable corresponding stepper motor*/
     switch(ulParameter2)
     {
     case X_LIMIT:
@@ -56,6 +58,8 @@ void Motion_Home(uint32_t axis)
     }
 }
 
+uint32_t steps_per_mm[AXIS_COUNT] = {80.0, 80.0, 400.0, 80.0};
+
 void Motion_Linear(float *new_coordinates, float feedrate)
 {
     //Queue motion
@@ -67,8 +71,8 @@ void Motion_Linear(float *new_coordinates, float feedrate)
 
     for(i = 0; i < AXIS_COUNT; i++)
     {
-        target[i] = lround(new_coordinates[i] * STEPS_PER_MM);
-        current[i] = lround(*(float*)Printer_Get(CURRENT_COORDINATE, i) * STEPS_PER_MM);
+        target[i] = lround(new_coordinates[i] * steps_per_mm[i]);
+        current[i] = lround(*(float*)Printer_Get(CURRENT_COORDINATE, i) * steps_per_mm[i]);
         motion.steps[i] = labs(target[i] - current[i]);
 
         if(target[i] < current[i])
@@ -83,19 +87,20 @@ void Motion_Linear(float *new_coordinates, float feedrate)
     frequency = (feedrate * STEPS_PER_MM) / 60;
     motion.delay = 48000000/frequency;
 
-    //Acceleration profile calculations here
+    /*Acceleration profile calculations here*/
+
+
+
     Printer_Set(STATUS, BUSY, NULL);
 
-    //Hold here until there is space on the queue
+    /*Hold here until there is space on the queue*/
     if(xQueueSend(*(QueueHandle_t*)Printer_Get(MOTION_QUEUE, NULL), &motion, 48000000*30) != pdPASS)
     {
-        //Motion Queue is taking longer than expected
+        /*Motion Queue is taking longer than expected*/
         MSPrintf(UART0, "Error: Motion took longer than expected\n");
     }
-    else
-    {
-        //Motion is in the queue
-    }
+
+    /*Motion is in the queue*/
 }
 
 
