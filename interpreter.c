@@ -158,7 +158,7 @@ void Interpreter_Run(struct sBlock block)
         else if(block.non_modal[i] == SEND_TEMPERATURE)
         {
             //float t = Temperature_Get();
-            //MSPrintf(UART0, "ok T:%f B:25.0", t);
+            MSPrintf(UART0, "ok T:25.0 B:25.0\n");
         }
 
         else if(block.non_modal[i] == SEND_POSITION)

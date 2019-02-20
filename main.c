@@ -31,9 +31,9 @@ void main(void)
 
     //Timer for stepper motor pulse generation generation
     Timer32_Open(TIMER0);
+    Timer32_Open(TIMER1);
 
     //Create tasks
-    //xTaskCreate(prvCommunications_Task, "Communications", 128, NULL, tskIDLE_PRIORITY+1, Communications_GetTaskHandle());
     xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY, Interpreter_GetTaskHandle());
     xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY+1, Interpolator_GetTaskHandle());
 

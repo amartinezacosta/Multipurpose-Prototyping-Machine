@@ -13,6 +13,10 @@ void Timer0_Callback(void *pvParameter1, uint32_t ulParameter2)
     xTaskNotifyGive(xInterpolator_Task);
 }
 
+void Timer1_Callback(void *pvParameter1, uint32_t ulParameter2)
+{
+    GPIO_Write(STEP_PORT, X_STEP|Y_STEP|Z_STEP|E_STEP, LOW);
+}
 
 void prvInterpolator_Task(void *args)
 {
@@ -22,6 +26,7 @@ void prvInterpolator_Task(void *args)
     uint16_t output = 0;
 
     Timer32_SetCallback(TIMER0, Timer0_Callback);
+    Timer32_SetCallback(TIMER1, Timer1_Callback);
 
     while(1)
     {
@@ -59,6 +64,7 @@ void prvInterpolator_Task(void *args)
 
                     GPIO_Write(STEP_PORT, output, HIGH);
                     output = 0;
+                    Timer32_Start(TIMER1, 50);
 
                     axis_steps[0] += motion.steps[0];
                     if(axis_steps[0] > motion.total)
@@ -90,7 +96,6 @@ void prvInterpolator_Task(void *args)
                     }
 
                     total_steps++;
-                    GPIO_Write(STEP_PORT, X_STEP|Y_STEP|Z_STEP|E_STEP, LOW);
 
                     Timer32_Start(TIMER0, motion.delay);
                 }
