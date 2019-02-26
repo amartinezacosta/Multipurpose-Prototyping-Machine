@@ -15,7 +15,8 @@ void Timer0_Callback(void *pvParameter1, uint32_t ulParameter2)
 
 void Timer1_Callback(void *pvParameter1, uint32_t ulParameter2)
 {
-    GPIO_Write(STEP_PORT, X_STEP|Y_STEP|Z_STEP|E_STEP, LOW);
+    MOTOR_PULSE_DOWN(X_STEP|Y_STEP|Z_STEP|E_STEP);
+    //GPIO_Write(STEP_PORT, X_STEP|Y_STEP|Z_STEP|E_STEP, LOW);
 }
 
 void prvInterpolator_Task(void *args)
@@ -43,11 +44,14 @@ void prvInterpolator_Task(void *args)
             }
 
             //Enable stepper motors
-            GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, LOW);
+            MOTOR_ENABLE(X_EN|Y_EN|Z_EN|E_EN);
+            //GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, LOW);
 
             //Set direction of stepper motors
-            GPIO_Write(DIR_PORT, X_DIR|Y_DIR|Z_DIR|E_DIR|E_DIR, LOW);
-            GPIO_Write(DIR_PORT, motion.direction, HIGH);
+            MOTOR_CLW(X_DIR|Y_DIR|Z_DIR|E_DIR);
+            MOTOR_CCLW(X_DIR|Y_DIR|Z_DIR|E_DIR);
+            //GPIO_Write(DIR_PORT, X_DIR|Y_DIR|Z_DIR|E_DIR|E_DIR, LOW);
+            //GPIO_Write(DIR_PORT, motion.direction, HIGH);
 
             //Start timer, timeout 1 clock cycle
             Timer32_Start(TIMER0, 1);
@@ -62,7 +66,8 @@ void prvInterpolator_Task(void *args)
                         break;
                     }
 
-                    GPIO_Write(STEP_PORT, output, HIGH);
+                    MOTOR_PULSE_UP(output);
+                    //GPIO_Write(STEP_PORT, output, HIGH);
                     output = 0;
                     Timer32_Start(TIMER1, 50);
 
@@ -102,7 +107,8 @@ void prvInterpolator_Task(void *args)
             }
 
             //Done with this motion, disable stepper motors
-            GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, HIGH);
+            MOTOR_DISABLE(X_EN|Y_EN|Z_EN|E_EN);
+            //GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, HIGH);
             Printer_Set(STATUS, READY, NULL);
         }
         else

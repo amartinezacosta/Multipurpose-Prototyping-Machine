@@ -1,30 +1,7 @@
 #include "motion.h"
 
 uint16_t Direction_PinMask[AXIS_COUNT] = {X_DIR, Y_DIR, Z_DIR, E_DIR};
-uint16_t Limit_PinMask[AXIS_COUNT - 1] = {X_LIMIT, Y_LIMIT, Z_LIMIT};
-
-
-bool homing = false;
-
-void GPIO_LimitsCallback(void *pvParameter1, uint32_t ulParameter2)
-{
-    /*Stop this toolpath instruction if limit switch is hit*/
-    Printer_Set(STATUS, STOP, NULL);
-
-    /*Disable corresponding stepper motor*/
-    switch(ulParameter2)
-    {
-    case X_LIMIT:
-        GPIO_Write(EN_PORT, X_EN, HIGH);
-        break;
-    case Y_LIMIT:
-        GPIO_Write(EN_PORT, Y_EN, HIGH);
-        break;
-    case Z_LIMIT:
-        GPIO_Write(EN_PORT, Z_EN, HIGH);
-        break;
-    }
-}
+uint32_t steps_per_mm[AXIS_COUNT] = {80.0, 80.0, 400.0, 80.0};
 
 void Motion_Home(uint32_t axis)
 {
@@ -57,8 +34,6 @@ void Motion_Home(uint32_t axis)
         }
     }
 }
-
-uint32_t steps_per_mm[AXIS_COUNT] = {80.0, 80.0, 400.0, 80.0};
 
 void Motion_Linear(float *new_coordinates, float feedrate)
 {

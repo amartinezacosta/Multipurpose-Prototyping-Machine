@@ -7,10 +7,10 @@
 #include "semphr.h"
 #include "task.h"
 #include "config.h"
+#include "Devices/MSPIO.h"
 #include "Drivers/GPIO_Driver.h"
 #include "printer.h"
 #include "pinmap.h"
-#include "MSPIO.h"
 
 #define MAX(a, b)               ( ((a) > (b)) ? (a) : (b) )
 

@@ -2,6 +2,8 @@
 #include "interpreter.h"
 #include "interpolator.h"
 #include "control.h"
+#include "Devices/motor.h"
+#include "Devices/button.h"
 
 void main(void)
 {
@@ -12,19 +14,19 @@ void main(void)
     UART_Open(UART0);
     Communications_Init();
 
-    //Open GPIO for stepper motors
-    GPIO_Open(STEP_PORT, X_STEP|Y_STEP|Z_STEP|E_STEP, true);
-    GPIO_Open(DIR_PORT, X_DIR|Y_DIR|Z_DIR|E_DIR, true);
-    GPIO_Open(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, true);
+    //Open stepper motors
+    Motor_Open(X_MOTOR);
+    Motor_Open(Y_MOTOR);
+    Motor_Open(Z_MOTOR);
+    Motor_Open(E_MOTOR);
 
-    //Disable stepper motors
-    GPIO_Write(STEP_PORT, X_STEP|Y_STEP|Z_STEP|E_STEP, LOW);
-    GPIO_Write(DIR_PORT, X_DIR|Y_DIR|Z_DIR|E_DIR, LOW);
-    GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, HIGH);
+    //Open GPIO for limit switches, set callback
+    //GPIO_Open(LIMITS_PORT, X_LIMIT|Y_LIMIT|Z_LIMIT, false);
+    //GPIO_SetCallback(LIMITS_PORT, X_LIMIT|Y_LIMIT|Z_LIMIT, GPIO_LimitsCallback);
+    Button_Open(X_ENDSTOP_BUTTON, ENDSTOP);
+    Button_Open(Y_ENDSTOP_BUTTON, ENDSTOP);
+    Button_Open(Z_ENDSTOP_BUTTON, ENDSTOP);
 
-    //Open gpios for limit switches, set callback
-    GPIO_Open(LIMITS_PORT, X_LIMIT|Y_LIMIT|Z_LIMIT, false);
-    GPIO_SetCallback(LIMITS_PORT, X_LIMIT|Y_LIMIT|Z_LIMIT, GPIO_LimitsCallback);
 
     //For spindle, laser or other crazy stuff
     PWM_Open(PWM1);

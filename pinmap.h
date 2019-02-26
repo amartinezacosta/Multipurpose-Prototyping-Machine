@@ -30,11 +30,11 @@
 
 /*LIMIT SWITCHES DEFINITIONS..................*/
 /*LIMITS PORT*/
-#define LIMITS_PORT             GPIO_PORT_P6
+#define ENDSTOP_PORT             GPIO_PORT_P6
 
 /*LIMITS PINS*/
-#define X_LIMIT                 GPIO_PIN1
-#define Y_LIMIT                 GPIO_PIN6
-#define Z_LIMIT                 GPIO_PIN7
+#define X_ENDSTOP                 GPIO_PIN1
+#define Y_ENDSTOP                 GPIO_PIN6
+#define Z_ENDSTOP                 GPIO_PIN7
 
 #endif /* PINMAP_H_ */
