@@ -1,5 +1,5 @@
-#ifndef PWM_DRIVER_H_
-#define PWM_DRIVER_H_
+#ifndef DRIVERS_PWM_DRIVER_H_
+#define DRIVERS_PWM_DRIVER_H_
 
 #include "ti/devices/msp432p4xx/driverlib/driverlib.h"
 
@@ -19,4 +19,4 @@ void PWM_Open(uint32_t pwm);
 void PWM_SetFrequency(uint32_t pwm, uint32_t frequency);
 void PWM_SetDutyCycle(uint32_t pwm, uint16_t duty);
 
-#endif /* PWM_DRIVER_H_ */
+#endif /* DRIVERS_PWM_DRIVER_H_ */

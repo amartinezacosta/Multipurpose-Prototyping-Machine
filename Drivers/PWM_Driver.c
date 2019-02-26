@@ -1,4 +1,4 @@
-#include "PWM_Driver.h"
+#include <Drivers/PWM_Driver.h>
 
 /*Timer runs from SMCLK which has a frequency of 48 MHz, we will set PWM frequency at 1KHz*/
 Timer_A_PWMConfig pwmConfigs[PWM_COUNT] =

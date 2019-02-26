@@ -1,5 +1,5 @@
-#ifndef GPIO_DRIVER_H_
-#define GPIO_DRIVER_H_
+#ifndef DRIVERS_GPIO_DRIVER_H_
+#define DRIVERS_GPIO_DRIVER_H_
 
 #include "ti/devices/msp432p4xx/driverlib/driverlib.h"
 #include "FreeRTOS.h"
@@ -20,4 +20,4 @@ uint8_t GPIO_Read(uint32_t port, uint16_t pins);
 void GPIO_Write(uint32_t port, uint16_t pins, uint32_t value);
 void GPIO_Toggle(uint32_t port, uint16_t pins);
 
-#endif /* GPIO_DRIVER_H_ */
+#endif /* DRIVERS_GPIO_DRIVER_H_ */

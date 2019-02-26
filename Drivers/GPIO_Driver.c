@@ -1,4 +1,4 @@
-#include "GPIO_Driver.h"
+#include <Drivers/GPIO_Driver.h>
 
 uint32_t GPIO_MapInterrupt[PORT_COUNT] = {INT_PORT1, INT_PORT2, INT_PORT3, INT_PORT4, INT_PORT5, INT_PORT6};
 void (*GPIO_PortCallbacks[PORT_COUNT][PIN_COUNT])(void*, uint32_t) = {0x0000000};

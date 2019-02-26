@@ -1,11 +1,11 @@
 #ifndef INTERPOLATOR_H_
 #define INTERPOLATOR_H_
 
+#include "Drivers/GPIO_Driver.h"
+#include "Drivers/Timer32_Driver.h"
 #include "FreeRTOS.h"
 #include "queue.h"
 #include "task.h"
-#include "Timer32_Driver.h"
-#include "GPIO_Driver.h"
 #include "motion.h"
 
 void prvInterpolator_Task(void *args);

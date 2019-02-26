@@ -1,5 +1,5 @@
-#ifndef UART_DRIVER_H_
-#define UART_DRIVER_H_
+#ifndef DRIVERS_UART_DRIVER_H_
+#define DRIVERS_UART_DRIVER_H_
 
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include "FreeRTOS.h"
@@ -25,4 +25,4 @@ uint32_t UART_Write(uint32_t uart, uint8_t *data, uint32_t size);
 uint32_t UART_Read(uint32_t uart, uint8_t *data, uint32_t size);
 uint32_t UART_Available(uint32_t uart);
 
-#endif /* UART_DRIVER_H_ */
+#endif /* DRIVERS_UART_DRIVER_H_ */

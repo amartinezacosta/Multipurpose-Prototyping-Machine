@@ -9,10 +9,10 @@
 #include "parser.h"
 #include "MSPIO.h"
 #include "config.h"
+#include "Drivers/PWM_Driver.h"
+#include "Drivers/Timer32_Driver.h"
 #include "printer.h"
 #include "motion.h"
-#include "Timer32_Driver.h"
-#include "PWM_Driver.h"
 
 void prvInterpreter_Task(void *args);
 TaskHandle_t *Interpreter_GetTaskHandle(void);

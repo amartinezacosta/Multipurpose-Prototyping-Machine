@@ -1,11 +1,11 @@
 #ifndef COMMUNICATIONS_H_
 #define COMMUNICATIONS_H_
 
+#include "Drivers/UART_Driver.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
 #include "interpreter.h"
-#include "UART_Driver.h"
 
 #define PACKET_SIZE         128
 #define QUEUE_DELAY         288000000

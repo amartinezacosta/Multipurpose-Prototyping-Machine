@@ -1,4 +1,4 @@
-#include "ADC_Driver.h"
+#include <Drivers/ADC_Driver.h>
 
 uint32_t ADC_MapPin[ADC_COUNT] = {GPIO_PIN5, GPIO_PIN7, GPIO_PIN6, GPIO_PIN0};
 uint32_t ADC_MapInput[ADC_COUNT] = {ADC_INPUT_A8, ADC_INPUT_A6, ADC_INPUT_A7, ADC_INPUT_A13};
