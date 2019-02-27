@@ -48,7 +48,7 @@ void prvInterpolator_Task(void *args)
 
             //Set direction of stepper motors
             MOTOR_CLW(X_DIR|Y_DIR|Z_DIR|E_DIR);
-            MOTOR_CCLW(X_DIR|Y_DIR|Z_DIR|E_DIR);
+            MOTOR_CCLW(motion.direction);
             //GPIO_Write(DIR_PORT, X_DIR|Y_DIR|Z_DIR|E_DIR|E_DIR, LOW);
             //GPIO_Write(DIR_PORT, motion.direction, HIGH);
 

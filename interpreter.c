@@ -209,6 +209,7 @@ void prvInterpreter_Task(void *args)
         /*At this point we know there is something on the queue, no point in checking*/
         xQueueReceive(Communications_GetPacketQueue(), &packet, portMAX_DELAY);
 
+        /*Perform lexical and syntax analysis on received data*/
         count = lexer(tokens, packet.data);
         if(count)
         {
