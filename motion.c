@@ -5,8 +5,8 @@ uint32_t steps_per_mm[AXIS_COUNT] = {80.0, 80.0, 400.0, 80.0};
 
 void Motion_Home(uint32_t axis)
 {
-    float coordinates[AXIS_COUNT-1] = {0.0};
-    float backoff[AXIS_COUNT-1] = {0.0};
+    float coordinates[AXIS_COUNT] = {0.0};
+    float backoff[AXIS_COUNT] = {0.0};
 
     uint32_t i;
     for(i = 0; i < AXIS_COUNT - 1; i++)
@@ -14,8 +14,8 @@ void Motion_Home(uint32_t axis)
         if(axis & BIT_SHIFT(i))
         {
             /*keep current coordinates, change coordinates of this axis*/
-            memcpy(coordinates, Printer_Get(CURRENT_COORDINATES, NULL), (AXIS_COUNT-1)*sizeof(float));
-            memcpy(backoff, Printer_Get(CURRENT_COORDINATES, NULL), (AXIS_COUNT-1)*sizeof(float));
+            memcpy(coordinates, Printer_Get(CURRENT_COORDINATES, NULL), (AXIS_COUNT)*sizeof(float));
+            memcpy(backoff, Printer_Get(CURRENT_COORDINATES, NULL), (AXIS_COUNT)*sizeof(float));
 
             /*Go towards limit switch*/
             coordinates[i] = -MAX_TRAVEL;
@@ -24,6 +24,7 @@ void Motion_Home(uint32_t axis)
             /*Assume axis is going to hit the limit switch, set axis current coordinate to 0*/
             coordinates[i] = 0.0;
             Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
+            Printer_Set(NEW_COORDINATE, i, &coordinates[i]);
 
             //Backoff from limit switch
             backoff[i] = BACKOFF;

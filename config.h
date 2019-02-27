@@ -2,7 +2,7 @@
 #define CONFIG_H_
 
 #define MAX_FEEDRATE            5000
-#define MIN_FEEDRATE            100
+#define MIN_FEEDRATE            10
 #define STEPS_PER_MM            80
 #define AXIS_COUNT              4
 #define MAX_TRAVEL              210
