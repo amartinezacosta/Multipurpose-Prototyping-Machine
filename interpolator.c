@@ -16,7 +16,6 @@ void Timer0_Callback(void *pvParameter1, uint32_t ulParameter2)
 void Timer1_Callback(void *pvParameter1, uint32_t ulParameter2)
 {
     MOTOR_PULSE_DOWN(X_STEP|Y_STEP|Z_STEP|E_STEP);
-    //GPIO_Write(STEP_PORT, X_STEP|Y_STEP|Z_STEP|E_STEP, LOW);
 }
 
 void prvInterpolator_Task(void *args)
@@ -58,62 +57,57 @@ void prvInterpolator_Task(void *args)
 
             while(total_steps != motion.total)
             {
-                if(ulTaskNotifyTake(pdTRUE, portMAX_DELAY))
+                ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+
+                if(*(uint32_t*)Printer_Get(STATUS, NULL) == STOP)
                 {
-                    if(*(uint32_t*)Printer_Get(STATUS, NULL) == STOP)
-                    {
-                        //End this motion if commanded
-                        break;
-                    }
-
-                    MOTOR_PULSE_UP(output);
-                    //GPIO_Write(STEP_PORT, output, HIGH);
-                    output = 0;
-                    Timer32_Start(TIMER1, 50);
-
-                    axis_steps[0] += motion.steps[0];
-                    if(axis_steps[0] > motion.total)
-                    {
-                        output |= X_STEP;
-                        axis_steps[0] -= motion.total;
-                    }
-
-                    axis_steps[1] += motion.steps[1];
-                    if(axis_steps[1] > motion.total)
-                    {
-                        output |= Y_STEP;
-                        axis_steps[1] -= motion.total;
-                    }
-
-                    axis_steps[2] += motion.steps[2];
-                    if(axis_steps[2] > motion.total)
-                    {
-                        output |= Z_STEP;
-                        axis_steps[2] -= motion.total;
-                    }
-
-
-                    axis_steps[3] += motion.steps[3];
-                    if(axis_steps[3] > motion.total)
-                    {
-                        output |= E_STEP;
-                        axis_steps[3] -= motion.total;
-                    }
-
-                    total_steps++;
-
-                    Timer32_Start(TIMER0, motion.delay);
+                    //End this motion if commanded
+                    break;
                 }
+
+                MOTOR_PULSE_UP(output);
+                //GPIO_Write(STEP_PORT, output, HIGH);
+                output = 0;
+                Timer32_Start(TIMER1, 50);
+
+                axis_steps[0] += motion.steps[0];
+                if(axis_steps[0] > motion.total)
+                {
+                    output |= X_STEP;
+                    axis_steps[0] -= motion.total;
+                }
+
+                axis_steps[1] += motion.steps[1];
+                if(axis_steps[1] > motion.total)
+                {
+                    output |= Y_STEP;
+                    axis_steps[1] -= motion.total;
+                }
+
+                axis_steps[2] += motion.steps[2];
+                if(axis_steps[2] > motion.total)
+                {
+                    output |= Z_STEP;
+                    axis_steps[2] -= motion.total;
+                }
+
+
+                axis_steps[3] += motion.steps[3];
+                if(axis_steps[3] > motion.total)
+                {
+                    output |= E_STEP;
+                    axis_steps[3] -= motion.total;
+                }
+
+                total_steps++;
+
+                Timer32_Start(TIMER0, motion.delay);
             }
 
             //Done with this motion, disable stepper motors
             MOTOR_DISABLE(X_EN|Y_EN|Z_EN|E_EN);
             //GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, HIGH);
             Printer_Set(STATUS, READY, NULL);
-        }
-        else
-        {
-            taskYIELD();
         }
     }
 }
