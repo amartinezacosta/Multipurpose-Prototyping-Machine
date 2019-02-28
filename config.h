@@ -20,6 +20,8 @@
 
 #define MAX_NON_MODAL           5
 
+#define LASER_MAX_INTENSITY     24000000
+#define LASER_MIN_INTENSITY     0
 
 
 #endif /* CONFIG_H_ */

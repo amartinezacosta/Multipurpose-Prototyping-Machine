@@ -20,13 +20,10 @@ void main(void)
     Motor_Open(Z_MOTOR);
     Motor_Open(E_MOTOR);
 
-    //Open GPIO for limit switches, set callback
-    //GPIO_Open(LIMITS_PORT, X_LIMIT|Y_LIMIT|Z_LIMIT, false);
-    //GPIO_SetCallback(LIMITS_PORT, X_LIMIT|Y_LIMIT|Z_LIMIT, GPIO_LimitsCallback);
+    //Open buttons for end stops
     Button_Open(X_ENDSTOP_BUTTON, ENDSTOP);
     Button_Open(Y_ENDSTOP_BUTTON, ENDSTOP);
     Button_Open(Z_ENDSTOP_BUTTON, ENDSTOP);
-
 
     //For spindle, laser or other crazy stuff
     PWM_Open(PWM1);
