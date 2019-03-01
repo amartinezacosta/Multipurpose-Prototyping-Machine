@@ -51,7 +51,7 @@ void prvInterpolator_Task(void *args)
 
                 MOTOR_PULSE_UP(output);
                 output = 0;
-                Timer32_Start(TIMER1, 10);
+                Timer32_Start(TIMER1, 1);
 
                 axis_steps[0] += motion.steps[0];
                 if(axis_steps[0] > motion.total)
