@@ -15,6 +15,4 @@ struct sExtruder
     uint32_t set_temperature;
 };
 
-
-
 #endif /* DEVICES_EXTRUDER_H_ */

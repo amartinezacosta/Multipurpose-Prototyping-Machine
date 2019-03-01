@@ -26,11 +26,11 @@ void main(void)
     Button_Open(Z_ENDSTOP_BUTTON, ENDSTOP);
 
     //For spindle, laser or other crazy stuff
-    PWM_Open(PWM1);
+    //PWM_Open(PWM1);
 
     //Timer for stepper motor pulse generation generation
-    Timer32_Open(TIMER0);
-    Timer32_Open(TIMER1);
+    //Timer32_Open(TIMER0);
+    //Timer32_Open(TIMER1);
 
     //Create tasks
     xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY, Interpreter_GetTaskHandle());

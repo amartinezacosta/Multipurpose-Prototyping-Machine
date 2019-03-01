@@ -8,25 +8,12 @@
 
 TaskHandle_t xInterpolator_Task;
 
-void Timer0_Callback(void *pvParameter1, uint32_t ulParameter2)
-{
-    xTaskNotifyGive(xInterpolator_Task);
-}
-
-void Timer1_Callback(void *pvParameter1, uint32_t ulParameter2)
-{
-    MOTOR_PULSE_DOWN(X_STEP|Y_STEP|Z_STEP|E_STEP);
-}
-
 void prvInterpolator_Task(void *args)
 {
     struct sMotion motion;
     uint32_t axis_steps[AXIS_COUNT];
     uint32_t total_steps;
     uint16_t output = 0;
-
-    Timer32_SetCallback(TIMER0, Timer0_Callback);
-    Timer32_SetCallback(TIMER1, Timer1_Callback);
 
     while(1)
     {
@@ -44,13 +31,10 @@ void prvInterpolator_Task(void *args)
 
             //Enable stepper motors
             MOTOR_ENABLE(X_EN|Y_EN|Z_EN|E_EN);
-            //GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, LOW);
 
             //Set direction of stepper motors
             MOTOR_CLW(X_DIR|Y_DIR|Z_DIR|E_DIR);
             MOTOR_CCLW(motion.direction);
-            //GPIO_Write(DIR_PORT, X_DIR|Y_DIR|Z_DIR|E_DIR|E_DIR, LOW);
-            //GPIO_Write(DIR_PORT, motion.direction, HIGH);
 
             //Start timer, timeout 1 clock cycle
             Timer32_Start(TIMER0, 1);
@@ -66,7 +50,6 @@ void prvInterpolator_Task(void *args)
                 }
 
                 MOTOR_PULSE_UP(output);
-                //GPIO_Write(STEP_PORT, output, HIGH);
                 output = 0;
                 Timer32_Start(TIMER1, 10);
 
@@ -91,7 +74,6 @@ void prvInterpolator_Task(void *args)
                     axis_steps[2] -= motion.total;
                 }
 
-
                 axis_steps[3] += motion.steps[3];
                 if(axis_steps[3] > motion.total)
                 {
@@ -101,12 +83,12 @@ void prvInterpolator_Task(void *args)
 
                 total_steps++;
 
-                Timer32_Start(TIMER0, motion.delay);
+                //Timer32_Start(TIMER0, motion.delay);
+                MOTOR_TIMEOUT(TIMER0, motion.delay);
             }
 
             //Done with this motion, disable stepper motors
             MOTOR_DISABLE(X_EN|Y_EN|Z_EN|E_EN);
-            //GPIO_Write(EN_PORT, X_EN|Y_EN|Z_EN|E_EN, HIGH);
             Printer_Set(STATUS, READY, NULL);
         }
     }
