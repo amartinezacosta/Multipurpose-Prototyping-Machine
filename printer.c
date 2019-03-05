@@ -15,7 +15,7 @@ void Printer_Init(void)
     memset(Printer.current_coordinates, 0, AXIS_COUNT*sizeof(float));
 
     //Spindle starting speed
-    Printer.spindle = 0.0;
+    Printer.spindle = 0;
 
     //Start at max feedrate
     Printer.feedrate = MAX_FEEDRATE;

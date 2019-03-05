@@ -1,6 +1,9 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+#define ACCELERATION            3000
+#define DECELERATION            150
+
 #define MAX_FEEDRATE            5000
 #define MIN_FEEDRATE            10
 #define STEPS_PER_MM            80

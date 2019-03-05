@@ -9,6 +9,8 @@
  * This tasks relies on notifications from a communication channel. We will receive a notification when there is a string in the
  * data packets queue*/
 
+/*Hello World*/
+
 #include "interpreter.h"
 
 TaskHandle_t xInterpreter_Task;
@@ -24,7 +26,7 @@ void Interpreter_Run(struct sBlock block)
     //2. set feed rate mode (G93, G94 — inverse time or per minute).
 
     //3. set feed rate (F).
-    if(block.feedrate > MIN_FEEDRATE)
+    if(block.feedrate > MIN_FEEDRATE && block.feedrate < MAX_FEEDRATE)
     {
         Printer_Set(FEEDRATE, NULL, &block.feedrate);
     }
@@ -179,7 +181,7 @@ void Interpreter_Run(struct sBlock block)
             Motion_Linear((float*)Printer_Get(NEW_COORDINATES, NULL), MAX_FEEDRATE);
             break;
         case FEEDRATE_POSITIONING:
-            Motion_Linear((float*)Printer_Get(NEW_COORDINATES, NULL), *(float*)Printer_Get(FEEDRATE, NULL));
+            Motion_Linear((float*)Printer_Get(NEW_COORDINATES, NULL), *(uint32_t*)Printer_Get(FEEDRATE, NULL));
             break;
         }
     }

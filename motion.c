@@ -36,13 +36,12 @@ void Motion_Home(uint32_t axis)
     }
 }
 
-void Motion_Linear(float *new_coordinates, float feedrate)
+void Motion_Linear(float *new_coordinates, uint32_t feedrate)
 {
     //Queue motion
     struct sMotion motion = {0};
     int32_t current[AXIS_COUNT];
     int32_t target[AXIS_COUNT];
-    float frequency;
     uint32_t i;
 
     for(i = 0; i < AXIS_COUNT; i++)
@@ -60,12 +59,9 @@ void Motion_Linear(float *new_coordinates, float feedrate)
         Printer_Set(CURRENT_COORDINATE, i, Printer_Get(NEW_COORDINATE, i));
     }
 
-    frequency = (feedrate * STEPS_PER_MM) / 60;
-    motion.delay = 48000000/frequency;
-
     /*Acceleration profile calculations here*/
-
-
+    float frequency = (feedrate * STEPS_PER_MM)/60;
+    motion.delay = (uint32_t)(48000000/frequency);
 
     Printer_Set(STATUS, BUSY, NULL);
 

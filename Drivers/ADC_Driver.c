@@ -6,6 +6,27 @@ uint32_t ADC_MapMemory[ADC_COUNT] = {ADC_MEM8, ADC_MEM6, ADC_MEM7, ADC_MEM13};
 uint32_t ADC_MapInterrupt[ADC_COUNT] = {ADC_INT8, ADC_INT6, ADC_INT7, ADC_INT13};
 void (*ADC_Callbacks[ADC_COUNT])(void *, uint32_t) = {0x00000000};
 
+/*
+ * uint16_t temp;
+ *
+ * void ADC0_Callback(uint16_t sample)
+ * {
+ *  temp = sample;
+ * }
+ *
+ * void main(void)
+ * {
+ * ADC_Open(ADC0);
+ * ADC_SetCallback(ADC0, ADC0_Callback);
+ *
+ * while(1)
+ * {
+ * ADC_Read(ADC0);
+ * }
+ *
+ * }
+ */
+
 void ADC_Open(uint32_t adc)
 {
     uint32_t pin = ADC_MapPin[adc];
