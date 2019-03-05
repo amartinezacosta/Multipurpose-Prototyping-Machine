@@ -101,9 +101,10 @@ struct sBlock parse(struct sToken *tokens, uint32_t count)
                 break;
             case 114:
                 block.non_modal[j++] = SEND_POSITION;
-            case 115:
-                //block.modal[6] = SET_TEMPERATURE;
-                //block.modal_flags |= BIT_SHIFT(6)
+                break;
+            case 109:
+                block.modal[6] = SET_TEMPERATURE;
+                block.modal_flags |= BIT_SHIFT(6);
                 break;
                 /*ADD M MORE COMMANDS HERE*/
             default:

@@ -42,9 +42,12 @@ void Interpreter_Run(struct sBlock block)
     //6. change tool (M6), set temperature for extruder here maybe?.
     if(block.modal_flags & BIT_SHIFT(6))
     {
-        if(block.spindle > -1)
+        Printer_Set(MODAL, 6, &block.modal[6]);
+        switch(*(uint32_t*)Printer_Get(MODAL, 6))
         {
-
+        case SET_TEMPERATURE:
+            //Extruder_SetTemperature(*(uint32_t*)Printer_Get(SPINDLE, NULL));
+            break;
         }
     }
 
