@@ -159,7 +159,7 @@ void Interpreter_Run(struct sBlock block)
 
         else if(block.non_modal[i] == SEND_TEMPERATURE)
         {
-            //float t = Temperature_Get();
+            //float t = Extruder_GetTemperature(EXTRUDER1);
             MSPrintf(UART0, "ok T:25.0 B:25.0\n");
         }
 

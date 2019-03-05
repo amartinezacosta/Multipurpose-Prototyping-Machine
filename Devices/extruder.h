@@ -11,7 +11,7 @@
 
 struct sExtruder
 {
-    uint32_t current_temperature;
+    float current_temperature;
     uint32_t set_temperature;
 };
 
