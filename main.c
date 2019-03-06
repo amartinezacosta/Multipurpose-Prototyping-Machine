@@ -5,8 +5,7 @@
 #include "Devices/motor.h"
 #include "Devices/button.h"
 
-void main(void)
-{
+void main(void){
     //Initialize printer variables
     Printer_Init();
 

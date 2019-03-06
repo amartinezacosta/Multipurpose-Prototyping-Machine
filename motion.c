@@ -19,7 +19,7 @@ void Motion_Home(uint32_t axis)
 
             /*Go towards limit switch*/
             coordinates[i] = -MAX_TRAVEL;
-            Motion_Linear(coordinates, 4000);
+            Motion_Linear(coordinates, MAX_FEEDRATE);
 
             /*Assume axis is going to hit the limit switch, set axis current coordinate to 0*/
             coordinates[i] = 0.0;
@@ -28,7 +28,7 @@ void Motion_Home(uint32_t axis)
 
             //Backoff from limit switch
             backoff[i] = BACKOFF;
-            Motion_Linear(backoff, 2000);
+            Motion_Linear(backoff, 100);
 
             //Go towards limit again
             //Motion_Linear(coordinates, 2000);
@@ -36,13 +36,13 @@ void Motion_Home(uint32_t axis)
     }
 }
 
-void Motion_Linear(float *new_coordinates, float feedrate)
+void Motion_Linear(float *new_coordinates, uint32_t feedrate)
 {
     //Queue motion
     struct sMotion motion = {0};
     int32_t current[AXIS_COUNT];
     int32_t target[AXIS_COUNT];
-    float frequency;
+    uint32_t stepsps;
     uint32_t i;
 
     for(i = 0; i < AXIS_COUNT; i++)
@@ -60,12 +60,13 @@ void Motion_Linear(float *new_coordinates, float feedrate)
         Printer_Set(CURRENT_COORDINATE, i, Printer_Get(NEW_COORDINATE, i));
     }
 
-    frequency = (feedrate * STEPS_PER_MM) / 60;
-    motion.delay = 48000000/frequency;
+    /*steps per second for given feedrate, assuming feedrate is given in mm/min*/
+    stepsps = feedrate * STEPS_PER_MM;
+    /*counter delay we are trying to achieve*/
+    motion.delay = TIMER_FREQUENCY/stepsps;
 
     /*Acceleration profile calculations here*/
-
-
+    //motion.delay = 0.676*TIMER_FREQUENCY*sqrt(2*STEPS_PER_MM/ACCELERATION);
 
     Printer_Set(STATUS, BUSY, NULL);
 
