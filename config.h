@@ -9,6 +9,7 @@
 #define BACKOFF                 5
 
 #define ACCELERATION            100    //mm/s^2
+#define DECELERATION            110    //mm/s^2
 
 #define MODAL_COUNT             13
 

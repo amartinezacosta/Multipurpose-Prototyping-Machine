@@ -16,14 +16,21 @@
 
 #define TIMER_FREQUENCY         48000000
 
+#define RUN     0
+#define ACCEL   1
+#define DECEL   2
+
 struct sMotion
 {
     uint16_t direction;
     uint32_t total;
     int32_t steps[AXIS_COUNT];
-    uint32_t min_delay;
+    uint32_t mdelay;
     uint32_t delay;
-    uint32_t asteps;
+    int32_t n;
+    int32_t a;
+    uint32_t dstart;
+    uint32_t state;
 };
 
 void Motion_Linear(float *new_coordinates, uint32_t feedrate);

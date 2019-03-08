@@ -63,10 +63,55 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     /*steps per second for given feedrate, assuming feedrate is given in mm/min*/
     stepsps = feedrate * STEPS_PER_MM;
     /*counter delay we are trying to achieve*/
-    motion.delay = TIMER_FREQUENCY/stepsps;
+    motion.mdelay = TIMER_FREQUENCY/stepsps;
 
     /*Acceleration profile calculations here*/
-    //motion.delay = 0.676*TIMER_FREQUENCY*sqrt(2*STEPS_PER_MM/ACCELERATION);
+    motion.delay = 100000;
+
+    /*How many steps we need to hit feedrate velocity*/
+    uint32_t asteps = (stepsps*stepsps)/(2*ACCELERATION);
+
+    /*How many steps until we start decelerating*/
+    uint32_t dsteps = motion.total*ACCELERATION/(ACCELERATION + DECELERATION);
+
+    if(asteps == 0)
+    {
+        asteps = 1;
+    }
+
+    if(dsteps == 0)
+    {
+        dsteps = 1;
+    }
+
+    if(dsteps <= asteps)
+    {
+        motion.n = dsteps - motion.total;
+    }
+    else
+    {
+        motion.n = -((int32_t)((asteps*ACCELERATION)/DECELERATION));
+    }
+
+    if(motion.n == 0)
+    {
+        motion.n = -1;
+    }
+
+    /*step where we have to start decelerating*/
+    motion.dstart = motion.total + motion.n;
+
+    if(motion.delay <= motion.mdelay)
+    {
+        motion.delay = motion.mdelay;
+        motion.state = RUN;
+    }
+    else
+    {
+        motion.state = ACCEL;
+    }
+
+    motion.a = 0;
 
     Printer_Set(STATUS, BUSY, NULL);
 

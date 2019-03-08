@@ -14,6 +14,7 @@ void prvInterpolator_Task(void *args)
     uint32_t axis_steps[AXIS_COUNT];
     uint32_t total_steps;
     uint16_t output = 0;
+    int32_t ndelay = 0;
 
     while(1)
     {
@@ -81,6 +82,45 @@ void prvInterpolator_Task(void *args)
                 }
 
                 total_steps++;
+
+                switch(motion.state)
+                {
+                case RUN:
+                    ndelay = motion.mdelay;
+                    if(total_steps >= motion.dstart)
+                    {
+                        motion.a = motion.n;
+                        motion.state = DECEL;
+                    }
+                    break;
+                case ACCEL:
+                    motion.a++;
+                    ndelay = motion.delay - ((2*motion.delay)/(4*motion.a + 1));
+                    if(total_steps >= motion.dstart)
+                    {
+                        motion.a = motion.n;
+                        motion.state = DECEL;
+                    }
+
+                    else if(ndelay <= motion.mdelay)
+                    {
+                        ndelay = motion.mdelay;
+                        motion.state = RUN;
+                    }
+                    break;
+                case DECEL:
+                    motion.a++;
+                    //ndelay = (int32_t)(2*motion.delay)/(4*motion.a + 1);
+                    ndelay = motion.delay - ((int32_t)(2*motion.delay)/(4*motion.a + 1));
+                    if(motion.a >= 0)
+                    {
+                        break;
+                    }
+                    break;
+                }
+
+                motion.delay = ndelay;
+
                 MOTOR_PULSE_DOWN(output);
                 MOTOR_TIMEOUT(TIMER0, motion.delay);
             }
