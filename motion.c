@@ -66,7 +66,9 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     motion.mdelay = TIMER_FREQUENCY/stepsps;
 
     /*Acceleration profile calculations here*/
-    motion.delay = 100000;
+    //double c0 = 0.676*(double)TIMER_FREQUENCY*(sqrt((2*(double)STEPS_PER_MM)/(double)ACCELERATION));
+    motion.delay = 300000;
+    //90000;
 
     /*How many steps we need to hit feedrate velocity*/
     uint32_t asteps = (stepsps*stepsps)/(2*ACCELERATION);
@@ -98,7 +100,7 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
         motion.n = -1;
     }
 
-    /*step where we have to start decelerating*/
+    /*step count where we have to start decelerating*/
     motion.dstart = motion.total + motion.n;
 
     if(motion.delay <= motion.mdelay)
