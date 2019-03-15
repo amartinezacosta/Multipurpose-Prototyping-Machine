@@ -17,6 +17,7 @@ void prvInterpolator_Task(void *args)
     int32_t denom;
     int32_t c32;
     int32_t step_down;
+    int32_t last_delay;
 
     while(1)
     {
@@ -40,6 +41,7 @@ void prvInterpolator_Task(void *args)
             MOTOR_CCLW(motion.direction);
 
             //Last delay should be equal to new delay
+            motion.delay = last_delay;
             denom = 1;
             c32 = motion.delay << 8;
 
@@ -105,6 +107,7 @@ void prvInterpolator_Task(void *args)
                 case DECEL:
                     if(total_steps == motion.total - 1)
                     {
+                        last_delay = motion.delay;
                         break;
                     }
                     denom += 4;
