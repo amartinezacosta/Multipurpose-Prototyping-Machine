@@ -25,11 +25,9 @@ struct sMotion
     uint16_t direction;
     uint32_t total;
     int32_t steps[AXIS_COUNT];
-    uint32_t mdelay;
-    uint32_t delay;
-    int32_t n;
-    int32_t a;
-    uint32_t dstart;
+    int32_t mdelay;
+    int32_t delay;
+    int32_t mid;
     uint32_t state;
 };
 

@@ -21,7 +21,7 @@ void Motion_Home(uint32_t axis)
             coordinates[i] = -MAX_TRAVEL;
             Motion_Linear(coordinates, MAX_FEEDRATE);
 
-            /*Assume axis is going to hit the limit switch, set axis current coordinate to 0*/
+            /*Assume axis is going to hit the limit switch, set current axis coordinate to 0*/
             coordinates[i] = 0.0;
             Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
             Printer_Set(NEW_COORDINATE, i, &coordinates[i]);
@@ -67,53 +67,9 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
 
     /*Acceleration profile calculations here*/
     //double c0 = 0.676*(double)TIMER_FREQUENCY*(sqrt((2*(double)STEPS_PER_MM)/(double)ACCELERATION));
-    motion.delay = 300000;
-    //90000;
-
-    /*How many steps we need to hit feedrate velocity*/
-    uint32_t asteps = (stepsps*stepsps)/(2*ACCELERATION);
-
-    /*How many steps until we start decelerating*/
-    uint32_t dsteps = motion.total*ACCELERATION/(ACCELERATION + DECELERATION);
-
-    if(asteps == 0)
-    {
-        asteps = 1;
-    }
-
-    if(dsteps == 0)
-    {
-        dsteps = 1;
-    }
-
-    if(dsteps <= asteps)
-    {
-        motion.n = dsteps - motion.total;
-    }
-    else
-    {
-        motion.n = -((int32_t)((asteps*ACCELERATION)/DECELERATION));
-    }
-
-    if(motion.n == 0)
-    {
-        motion.n = -1;
-    }
-
-    /*step count where we have to start decelerating*/
-    motion.dstart = motion.total + motion.n;
-
-    if(motion.delay <= motion.mdelay)
-    {
-        motion.delay = motion.mdelay;
-        motion.state = RUN;
-    }
-    else
-    {
-        motion.state = ACCEL;
-    }
-
-    motion.a = 0;
+    motion.mid = (motion.total-1)>>2;
+    motion.delay = 120000;
+    motion.state = ACCEL;
 
     Printer_Set(STATUS, BUSY, NULL);
 

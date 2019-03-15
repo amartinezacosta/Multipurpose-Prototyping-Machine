@@ -14,7 +14,9 @@ void prvInterpolator_Task(void *args)
     uint32_t axis_steps[AXIS_COUNT];
     uint32_t total_steps;
     uint16_t output = 0;
-    int32_t ndelay = 0;
+    int32_t denom;
+    int32_t c32;
+    int32_t step_down;
 
     while(1)
     {
@@ -36,6 +38,9 @@ void prvInterpolator_Task(void *args)
             //Set direction of stepper motors
             MOTOR_CLW(X_DIR|Y_DIR|Z_DIR|E_DIR);
             MOTOR_CCLW(motion.direction);
+
+            denom = 1;
+            c32 = motion.delay << 8;
 
             //Start timer, timeout 1 clock cycle
             Timer32_Start(TIMER0, 1);
@@ -81,48 +86,49 @@ void prvInterpolator_Task(void *args)
                     axis_steps[3] -= motion.total;
                 }
 
-                total_steps++;
-
                 switch(motion.state)
                 {
-                case RUN:
-                    ndelay = motion.mdelay;
-                    if(total_steps >= motion.dstart)
-                    {
-                        motion.a = motion.n;
-                        motion.state = DECEL;
-                    }
-                    break;
                 case ACCEL:
-                    motion.a++;
-                    ndelay = motion.delay - ((2*motion.delay)/(4*motion.a + 1));
-                    if(total_steps >= motion.dstart)
+                    if(total_steps == motion.mid)
                     {
-                        motion.a = motion.n;
                         motion.state = DECEL;
+                        denom = ((total_steps - motion.total)<<2)+1;
+                        if((motion.total & 1))
+                        {
+                            denom += 4;
+                            break;
+                        }
                     }
-
-                    else if(ndelay <= motion.mdelay)
-                    {
-                        ndelay = motion.mdelay;
-                        motion.state = RUN;
-                    }
-                    break;
                 case DECEL:
-                    motion.a++;
-                    //ndelay = (int32_t)(2*motion.delay)/(4*motion.a + 1);
-                    ndelay = motion.delay - ((int32_t)(2*motion.delay)/(4*motion.a + 1));
-                    if(motion.a >= 0)
+                    if(total_steps == motion.total - 1)
                     {
                         break;
                     }
+                    denom += 4;
+                    c32 -= (c32<<1)/denom;
+                    motion.delay = (c32+128)>>8;
+
+                    if(motion.delay <= motion.mdelay)
+                    {
+                        motion.state = RUN;
+                        step_down = motion.total - total_steps;
+                        motion.delay = motion.mdelay;
+                    }
+                    break;
+                case RUN:
+                    if(total_steps == step_down)
+                    {
+                        motion.state = DECEL;
+                        denom = ((total_steps - motion.total)<<2)+5;
+                    }
+                    break;
+                case STOP:
                     break;
                 }
 
-                motion.delay = ndelay;
-
                 MOTOR_PULSE_DOWN(output);
                 MOTOR_TIMEOUT(TIMER0, motion.delay);
+                total_steps++;
             }
 
             //Done with this motion, disable stepper motors
