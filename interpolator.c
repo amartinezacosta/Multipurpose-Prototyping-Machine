@@ -39,6 +39,7 @@ void prvInterpolator_Task(void *args)
             MOTOR_CLW(X_DIR|Y_DIR|Z_DIR|E_DIR);
             MOTOR_CCLW(motion.direction);
 
+            //Last delay should be equal to new delay
             denom = 1;
             c32 = motion.delay << 8;
 
@@ -58,6 +59,7 @@ void prvInterpolator_Task(void *args)
                 MOTOR_PULSE_UP(output);
                 output = 0;
 
+                //Bresenham Algorithm
                 axis_steps[0] += motion.steps[0];
                 if(axis_steps[0] > motion.total)
                 {
@@ -86,6 +88,7 @@ void prvInterpolator_Task(void *args)
                     axis_steps[3] -= motion.total;
                 }
 
+                //Calculate next delay
                 switch(motion.state)
                 {
                 case ACCEL:
