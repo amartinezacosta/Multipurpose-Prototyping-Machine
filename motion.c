@@ -28,7 +28,7 @@ void Motion_Home(uint32_t axis)
 
             //Backoff from limit switch
             backoff[i] = BACKOFF;
-            Motion_Linear(backoff, 100);
+            Motion_Linear(backoff, 2000);
 
             //Go towards limit again
             //Motion_Linear(coordinates, 2000);
@@ -45,6 +45,7 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     uint32_t stepsps;
     uint32_t i;
 
+    /*Calculate steps required to achieve this motion*/
     for(i = 0; i < AXIS_COUNT; i++)
     {
         target[i] = lround(new_coordinates[i] * steps_per_mm[i]);
@@ -61,14 +62,23 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     }
 
     /*steps per second for given feedrate, assuming feedrate is given in mm/min*/
-    stepsps = feedrate * STEPS_PER_MM;
+    stepsps = (feedrate * STEPS_PER_MM)/60;
     /*counter delay we are trying to achieve*/
     motion.mdelay = TIMER_FREQUENCY/stepsps;
 
     /*Acceleration profile calculations here*/
-    //double c0 = 0.676*(double)TIMER_FREQUENCY*(sqrt((2*(double)STEPS_PER_MM)/(double)ACCELERATION));
     motion.mid = (motion.total-1)>>2;
-    motion.delay = 120000;
+
+    if(motion.total < 500)
+    {
+        motion.delay = 480;
+    }
+    else
+    {
+        motion.delay = 48000; //1ms delay first timeout
+    }
+
+    //motion.delay = 128000; //1ms delay first timeout
     motion.state = ACCEL;
 
     Printer_Set(STATUS, BUSY, NULL);

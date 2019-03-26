@@ -17,7 +17,6 @@ void prvInterpolator_Task(void *args)
     int32_t denom;
     int32_t c32;
     int32_t step_down;
-    int32_t last_delay;
 
     while(1)
     {
@@ -40,8 +39,11 @@ void prvInterpolator_Task(void *args)
             MOTOR_CLW(X_DIR|Y_DIR|Z_DIR|E_DIR);
             MOTOR_CCLW(motion.direction);
 
-            //Last delay should be equal to new delay
-            motion.delay = last_delay;
+            /*New delay should be equal to last delay from previous motion. This should definitely depend on the
+             * on the angle between this motion and the previous motion. Which means that if there is a +90 degree angle the machine
+             * should definitely go into a complete stop. TODO: Research look-ahead better
+             */
+            //motion.delay = last_delay;
             denom = 1;
             c32 = motion.delay << 8;
 
@@ -61,7 +63,8 @@ void prvInterpolator_Task(void *args)
                 MOTOR_PULSE_UP(output);
                 output = 0;
 
-                //Bresenham Algorithm
+                //Bresenham Algorithm. This is just for linear interpolation, maybe we should add circular and higher
+                //order interpolation? TODO: Research Bresenham circular interpolation and spline interpolation
                 axis_steps[0] += motion.steps[0];
                 if(axis_steps[0] > motion.total)
                 {
@@ -98,7 +101,7 @@ void prvInterpolator_Task(void *args)
                     {
                         motion.state = DECEL;
                         denom = ((total_steps - motion.total)<<2)+1;
-                        if((motion.total & 1))
+                        if(motion.total & 1)
                         {
                             denom += 4;
                             break;
@@ -107,7 +110,6 @@ void prvInterpolator_Task(void *args)
                 case DECEL:
                     if(total_steps == motion.total - 1)
                     {
-                        last_delay = motion.delay;
                         break;
                     }
                     denom += 4;
@@ -127,8 +129,6 @@ void prvInterpolator_Task(void *args)
                         motion.state = DECEL;
                         denom = ((total_steps - motion.total)<<2)+5;
                     }
-                    break;
-                case STOP:
                     break;
                 }
 
