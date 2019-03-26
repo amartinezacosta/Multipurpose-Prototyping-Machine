@@ -76,7 +76,7 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     }
     else
     {
-        motion.delay = 50000;
+        motion.delay = 50000; //1ms delay first timeout
     }
 
     motion.state = ACCEL;
