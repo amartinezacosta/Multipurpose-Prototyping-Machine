@@ -92,7 +92,6 @@ void prvInterpolator_Task(void *args)
                     axis_steps[3] -= motion.total;
                 }
 
-                total_steps++;
                 /*Calculate next delay for acceleration profile*/
                 switch(motion.state)
                 {

@@ -72,7 +72,7 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     /*if segment is too short, use nominal speed. Use acceleration profile otherwise*/
     if(motion.total < 500)
     {
-        motion.delay = 4800;
+        motion.delay = motion.mdelay;
     }
     else
     {
