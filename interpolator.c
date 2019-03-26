@@ -49,7 +49,7 @@ void prvInterpolator_Task(void *args)
             //Start timer, timeout 1 clock cycle
             Timer32_Start(TIMER0, 1);
 
-            while(total_steps < motion.total)
+            while(total_steps != motion.total)
             {
                 ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
@@ -136,6 +136,7 @@ void prvInterpolator_Task(void *args)
                 total_steps++;
             }
 
+            //Done with this motion, disable stepper motors
             MOTOR_DISABLE(X_EN|Y_EN|Z_EN|E_EN);
             Printer_Set(STATUS, READY, NULL);
         }
