@@ -43,7 +43,6 @@ void prvInterpolator_Task(void *args)
              * on the angle between this motion and the previous motion. Which means that if there is a +90 degree angle the machine
              * should definitely go into a complete stop. TODO: Research look-ahead better
              */
-            //motion.delay = last_delay;
             denom = 1;
             c32 = motion.delay << 8;
 
@@ -93,7 +92,7 @@ void prvInterpolator_Task(void *args)
                     axis_steps[3] -= motion.total;
                 }
 
-                //Calculate next delay
+                /*Calculate next delay for acceleration profile*/
                 switch(motion.state)
                 {
                 case ACCEL:

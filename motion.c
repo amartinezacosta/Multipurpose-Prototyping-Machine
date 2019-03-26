@@ -69,16 +69,16 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     /*Acceleration profile calculations here*/
     motion.mid = (motion.total-1)>>2;
 
+    /*if segment is too short, use nominal speed. Use acceleration profile otherwise*/
     if(motion.total < 500)
     {
-        motion.delay = 480;
+        motion.delay = motion.mdelay;
     }
     else
     {
-        motion.delay = 48000; //1ms delay first timeout
+        motion.delay = 50000; //1ms delay first timeout
     }
 
-    //motion.delay = 128000; //1ms delay first timeout
     motion.state = ACCEL;
 
     Printer_Set(STATUS, BUSY, NULL);
