@@ -168,6 +168,20 @@ void Interpreter_Run(struct sBlock block)
             float *coordinates = (float*)Printer_Get(CURRENT_COORDINATES, NULL);
             MSPrintf(UART0, "ok C: X:%f Y:%f Z:%f E:%f\n", coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
         }
+
+        else if(block.non_modal[i] == SET_COORDINATE)
+        {
+            uint32_t j;
+
+            for(j = 0; j < AXIS_COUNT; j++)
+            {
+                if(block.axis_flags & BIT_SHIFT(j))
+                {
+                    Printer_Set(CURRENT_COORDINATE, j, &block.coordinates[j]);
+                    Printer_Set(NEW_COORDINATE, j, &block.coordinates[j]);
+                }
+            }
+        }
     }
 
 

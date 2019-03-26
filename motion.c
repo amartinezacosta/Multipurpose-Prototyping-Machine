@@ -61,10 +61,6 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
         Printer_Set(CURRENT_COORDINATE, i, Printer_Get(NEW_COORDINATE, i));
     }
 
-    /*Acceleration profile calculations here*/
-    float frequency = (feedrate * STEPS_PER_MM)/60;
-    motion.delay = (uint32_t)(48000000/frequency);
-
     /*steps per second for given feedrate, assuming feedrate is given in mm/min*/
     stepsps = (feedrate * STEPS_PER_MM)/60;
     /*counter delay we are trying to achieve*/
@@ -76,11 +72,11 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     /*if segment is too short, use nominal speed. Use acceleration profile otherwise*/
     if(motion.total < 500)
     {
-        motion.delay = motion.mdelay;
+        motion.delay = 4800;
     }
     else
     {
-        motion.delay = 50000; //1ms delay first timeout
+        motion.delay = 50000;
     }
 
     motion.state = ACCEL;
