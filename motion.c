@@ -19,9 +19,9 @@ void Motion_Home(uint32_t axis)
 
             /*Go towards limit switch*/
             coordinates[i] = -MAX_TRAVEL;
-            Motion_Linear(coordinates, 4000);
+            Motion_Linear(coordinates, MAX_FEEDRATE);
 
-            /*Assume axis is going to hit the limit switch, set axis current coordinate to 0*/
+            /*Assume axis is going to hit the limit switch, set current axis coordinate to 0*/
             coordinates[i] = 0.0;
             Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
             Printer_Set(NEW_COORDINATE, i, &coordinates[i]);
@@ -42,8 +42,10 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     struct sMotion motion = {0};
     int32_t current[AXIS_COUNT];
     int32_t target[AXIS_COUNT];
+    uint32_t stepsps;
     uint32_t i;
 
+    /*Calculate steps required to achieve this motion*/
     for(i = 0; i < AXIS_COUNT; i++)
     {
         target[i] = lround(new_coordinates[i] * steps_per_mm[i]);
@@ -62,6 +64,26 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     /*Acceleration profile calculations here*/
     float frequency = (feedrate * STEPS_PER_MM)/60;
     motion.delay = (uint32_t)(48000000/frequency);
+
+    /*steps per second for given feedrate, assuming feedrate is given in mm/min*/
+    stepsps = (feedrate * STEPS_PER_MM)/60;
+    /*counter delay we are trying to achieve*/
+    motion.mdelay = TIMER_FREQUENCY/stepsps;
+
+    /*Acceleration profile calculations here*/
+    motion.mid = (motion.total-1)>>2;
+
+    /*if segment is too short, use nominal speed. Use acceleration profile otherwise*/
+    if(motion.total < 500)
+    {
+        motion.delay = motion.mdelay;
+    }
+    else
+    {
+        motion.delay = 50000; //1ms delay first timeout
+    }
+
+    motion.state = ACCEL;
 
     Printer_Set(STATUS, BUSY, NULL);
 

@@ -25,7 +25,7 @@ void Motor_Open(uint32_t motor)
     //Disable stepper motors
     GPIO_Write(EN_PORT, motor_enableMap[motor], HIGH);
 
-    //Open timers for motor pulses, set callbacks for single shot timeouts
+    //Open timers for motor pulses, set call backs for single shot timeouts
     if(!timer_set)
     {
         //timers have not been set
