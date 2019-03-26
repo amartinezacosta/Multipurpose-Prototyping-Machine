@@ -12,7 +12,6 @@ struct sBlock parse(struct sToken *tokens, uint32_t count)
      * valid F, S or P letter
      */
     block.spindle = -1;
-    block.feedrate = -1.0;
     block.delay = -1.0;
 
     for(i = 0; i < count; i++)

@@ -9,7 +9,6 @@
  * This tasks relies on notifications from a communication channel. We will receive a notification when there is a string in the
  * data packets queue*/
 
-/*Hello World*/
 
 #include "interpreter.h"
 
