@@ -24,9 +24,11 @@ void main(void){
     Button_Open(Y_ENDSTOP_BUTTON, ENDSTOP);
     Button_Open(Z_ENDSTOP_BUTTON, ENDSTOP);
 
+
     //Create tasks
-    xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY, Interpreter_GetTaskHandle());
-    xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY+1, Interpolator_GetTaskHandle());
+    xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY+1, Interpreter_GetTaskHandle());
+    xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY+2, Interpolator_GetTaskHandle());
+    xTaskCreate(prvSystemControl_Task, "Control", 128, NULL, tskIDLE_PRIORITY, NULL);
 
     //Start the RTOS
     vTaskStartScheduler();

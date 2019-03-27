@@ -2,8 +2,6 @@
 
 void prvSystemControl_Task(void *args)
 {
-
-
     while(1)
     {
 
