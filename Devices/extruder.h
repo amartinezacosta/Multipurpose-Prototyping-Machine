@@ -6,8 +6,8 @@
 
 #define EXTRUDER_COUNT      2
 
-#define EXTRUDER1           1
-#define EXTRUDER2           2
+#define EXTRUDER1           0
+#define EXTRUDER2           1
 
 struct sPID{
     uint32_t max_pwm_limit;
@@ -25,5 +25,11 @@ struct sExtruder
 
     struct sPID PID;
 };
+
+
+void Extruder_Open(uint32_t extruder);
+uint32_t Extruder_GetTemperature(uint32_t extruder);
+void Extruder_SetTemperature(uint32_t extruder, uint32_t temp);
+void Temperature_Control(uint32_t extruder);
 
 #endif /* DEVICES_EXTRUDER_H_ */

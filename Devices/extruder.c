@@ -2,19 +2,11 @@
 
 struct sExtruder Extruder[EXTRUDER_COUNT];
 uint32_t extruder_adcMap[EXTRUDER_COUNT] = {ADC0, ADC1};
-uint32_t extruder_pwmMap[EXTRUDER_COUNT] = {PWM2, PWM3};
+uint32_t extruder_pwmMap[EXTRUDER_COUNT] = {PWM1, PWM3};
 
 void TemperatureCallback(void* param, uint32_t sample)
 {
-    switch(*(uint32_t*)param)
-    {
-    case ADC0:
-        Extruder[0].current_temperature = sample;
-        break;
-    case ADC1:
-        Extruder[1].current_temperature = sample;
-        break;
-    }
+    Extruder[0].current_temperature = sample;
 }
 
 void Extruder_Open(uint32_t extruder)
@@ -22,16 +14,18 @@ void Extruder_Open(uint32_t extruder)
     ADC_Open(extruder_adcMap[extruder]);
     ADC_SetCallback(extruder_adcMap[extruder], TemperatureCallback);
 
-    Extruder[extruder].PID.max_pwm_limit = 12000;
+    Extruder[extruder].PID.max_pwm_limit = 750;
+    Extruder[extruder].set_temperature = 25;
+
     PWM_Open(extruder_pwmMap[extruder]);
 }
 
-float Extruder_Get_Temperature(uint32_t extruder)
+uint32_t Extruder_GetTemperature(uint32_t extruder)
 {
     return Extruder[extruder].current_temperature;
 }
 
-void Extruter_Set_Temperature(uint32_t extruder, uint32_t temp)
+void Extruder_SetTemperature(uint32_t extruder, uint32_t temp)
 {
     Extruder[extruder].set_temperature = temp;
 }
@@ -47,7 +41,7 @@ void Temperature_Control(uint32_t extruder)
     float ki = Extruder[extruder].PID.ki;
     float lastError = Extruder[extruder].PID.last_error;
 
-    float error = targetTemp - currentTemp;
+    float error = (float)(targetTemp - currentTemp);
 
     kp += error;
     kd = error - lastError;

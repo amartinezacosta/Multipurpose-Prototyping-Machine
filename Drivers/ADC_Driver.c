@@ -4,7 +4,7 @@ uint32_t ADC_MapPin[ADC_COUNT] = {GPIO_PIN5, GPIO_PIN7, GPIO_PIN6, GPIO_PIN0};
 uint32_t ADC_MapInput[ADC_COUNT] = {ADC_INPUT_A8, ADC_INPUT_A6, ADC_INPUT_A7, ADC_INPUT_A13};
 uint32_t ADC_MapMemory[ADC_COUNT] = {ADC_MEM8, ADC_MEM6, ADC_MEM7, ADC_MEM13};
 uint32_t ADC_MapInterrupt[ADC_COUNT] = {ADC_INT8, ADC_INT6, ADC_INT7, ADC_INT13};
-void (*ADC_Callbacks[ADC_COUNT])(void *, uint32_t) = {0x00000000};
+void (*ADC_Callbacks[ADC_COUNT])(void*, uint32_t) = {0x00000000};
 
 /*
  * uint16_t temp;
@@ -61,35 +61,35 @@ void ADC14_IRQHandler(void)
 {
     uint64_t status = MAP_ADC14_getEnabledInterruptStatus();
     uint32_t value;
-    uint32_t adc;
+    uint32_t adc[2];
     MAP_ADC14_clearInterruptFlag(status);
 
     if (ADC_INT8 & status)
     {
-        adc = ADC0;
+        adc[0] = ADC0;
         value = MAP_ADC14_getResult(ADC_MEM8);
     }
 
     else if(ADC_INT6 & status)
     {
-        adc = ADC1;
+        adc[0] = ADC1;
         value = MAP_ADC14_getResult(ADC_MEM6);
     }
 
     else if(ADC_INT7 & status)
     {
-        adc = ADC2;
+        adc[0] = ADC2;
         value = MAP_ADC14_getResult(ADC_MEM7);
     }
 
     else if(ADC_INT13 & status)
     {
-        adc = ADC3;
+        adc[0] = ADC3;
         value = MAP_ADC14_getResult(ADC_MEM13);
     }
 
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    xTimerPendFunctionCallFromISR(ADC_Callbacks[adc], (uint32_t*)&adc, value, &xHigherPriorityTaskWoken);
+    xTimerPendFunctionCallFromISR(ADC_Callbacks[adc[0]], adc, value, &xHigherPriorityTaskWoken);
 
 
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);

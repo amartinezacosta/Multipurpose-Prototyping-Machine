@@ -4,6 +4,7 @@
 #include "control.h"
 #include "Devices/motor.h"
 #include "Devices/button.h"
+#include "Devices/extruder.h"
 
 void main(void){
     //Initialize printer variables
@@ -24,6 +25,8 @@ void main(void){
     Button_Open(Y_ENDSTOP_BUTTON, ENDSTOP);
     Button_Open(Z_ENDSTOP_BUTTON, ENDSTOP);
 
+    //Open Extruder 0
+    Extruder_Open(EXTRUDER1);
 
     //Create tasks
     xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY+1, Interpreter_GetTaskHandle());

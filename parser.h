@@ -21,6 +21,7 @@
 #define HOME                        2
 #define SEND_POSITION               3
 #define SET_COORDINATE              4
+#define SET_TEMPERATURE             5
 
 #define BIT_SHIFT(n)            (1<<n)
 
