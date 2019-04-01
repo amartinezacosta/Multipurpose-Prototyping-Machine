@@ -6,8 +6,8 @@
 
 #define STEPS_PER_MM            80
 #define AXIS_COUNT              4
-#define MAX_TRAVEL              210
-#define BACKOFF                 5    //mm/min
+#define MAX_TRAVEL              {210.0, 210.0, 210.0}
+#define BACKOFF                 {2.0, 2.0 , 2.6}    //mm/min
 
 #define MODAL_COUNT             13
 
