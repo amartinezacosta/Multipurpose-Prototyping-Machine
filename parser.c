@@ -48,7 +48,7 @@ struct sBlock parse(struct sToken *tokens, uint32_t count)
                 block.modal[6] = MILIMETERS;
                 block.modal_flags |= BIT_SHIFT(6);
                 break;
-            case 96:
+            case 92:
                 block.non_modal[j++] = SET_COORDINATE;
                 break;
             case 28:

@@ -40,8 +40,8 @@ void prvInterpolator_Task(void *args)
             MOTOR_CCLW(motion.direction);
 
             /*New delay should be equal to last delay from previous motion. This should definitely depend on the
-             * on the angle between this motion and the previous motion. Which means that if there is a +90 degree angle the machine
-             * should definitely go into a complete stop. TODO: Research look-ahead better
+             * on the angle between this motion and the previous motion. Which means that if there is a < 90 degree angle the machine
+             * should definitely go into a complete stop. TODO: Research look-ahead
              */
             denom = 1;
             c32 = motion.delay << 8;

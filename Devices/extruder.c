@@ -10,6 +10,9 @@ const float ki = 0.0005;
 
 void TemperatureCallback(void* param, uint32_t sample)
 {
+    /*TODO: We should change between ADC channels. Rigth now the void *param parameter does
+     * contain a valid ADC channel, it should be look into!.
+     */
     float voltage;
     float temperature;
 
@@ -34,13 +37,12 @@ void Extruder_Open(uint32_t extruder)
     uint32_t pwm = extruder_pwmMap[extruder];
 
     ADC_Open(adc);
+    PWM_Open(pwm);
     ADC_SetCallback(adc, TemperatureCallback);
 
-    Extruder[extruder].PID.max_pwm_limit = 20;
+    Extruder[extruder].PID.max_pwm_limit = 60;
     Extruder[extruder].set_temperature = 25;
     Extruder[extruder].PID.last_error = 0.0;
-
-    PWM_Open(pwm);
 }
 
 float Extruder_GetTemperature(uint32_t extruder)
@@ -51,6 +53,11 @@ float Extruder_GetTemperature(uint32_t extruder)
 void Extruder_SetTemperature(uint32_t extruder, uint32_t temp)
 {
     Extruder[extruder].set_temperature = temp;
+}
+
+void Extruder_SetMaxPWM(uint32_t extruder, uint32_t pwm_limit)
+{
+    Extruder[extruder].PID.max_pwm_limit = pwm_limit;
 }
 
 void Temperature_Control(uint32_t extruder)

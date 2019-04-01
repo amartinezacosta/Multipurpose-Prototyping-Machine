@@ -1,7 +1,7 @@
 #include "motion.h"
 
 uint16_t Direction_PinMask[AXIS_COUNT] = {X_DIR, Y_DIR, Z_DIR, E_DIR};
-uint32_t steps_per_mm[AXIS_COUNT] = {80.0, 80.0, 400.0, 80.0};
+float steps_per_mm[AXIS_COUNT] = {80.0, 80.0, 400.0, 170.0};
 
 void Motion_Home(uint32_t axis)
 {
@@ -24,14 +24,14 @@ void Motion_Home(uint32_t axis)
             /*Assume axis is going to hit the limit switch, set current axis coordinate to 0*/
             coordinates[i] = 0.0;
             Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
-            Printer_Set(NEW_COORDINATE, i, &coordinates[i]);
 
             //Backoff from limit switch
             backoff[i] = BACKOFF;
             Motion_Linear(backoff, 2000);
 
             //Go towards limit again
-            //Motion_Linear(coordinates, 2000);
+            Motion_Linear(coordinates, 2000);
+            Printer_Set(NEW_COORDINATE, i, &coordinates[i]);
         }
     }
 }
