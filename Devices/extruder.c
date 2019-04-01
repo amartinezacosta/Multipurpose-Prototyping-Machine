@@ -1,26 +1,49 @@
 #include "extruder.h"
 
 struct sExtruder Extruder[EXTRUDER_COUNT];
-uint32_t extruder_adcMap[EXTRUDER_COUNT] = {ADC0, ADC1};
+uint32_t extruder_adcMap[EXTRUDER_COUNT] = {ADC1, ADC0};
 uint32_t extruder_pwmMap[EXTRUDER_COUNT] = {PWM1, PWM3};
+
+const float kp = .7;
+const float kd = 0.05;
+const float ki = 0.0005;
 
 void TemperatureCallback(void* param, uint32_t sample)
 {
-    Extruder[0].current_temperature = sample;
+    float voltage;
+    float temperature;
+
+    /*Convert sample to voltage value*/
+    voltage = (float)((sample/4095.0)*3.3);
+    if(voltage > 2.8)
+    {
+        temperature = -138.05*voltage + 486.31;
+    }
+    else
+    {
+        temperature = -62.185*voltage + 266.74;
+    }
+
+    /*Temperature in celsius*/
+    Extruder[0].current_temperature = temperature;
 }
 
 void Extruder_Open(uint32_t extruder)
 {
-    ADC_Open(extruder_adcMap[extruder]);
-    ADC_SetCallback(extruder_adcMap[extruder], TemperatureCallback);
+    uint32_t adc = extruder_adcMap[extruder];
+    uint32_t pwm = extruder_pwmMap[extruder];
 
-    Extruder[extruder].PID.max_pwm_limit = 750;
+    ADC_Open(adc);
+    ADC_SetCallback(adc, TemperatureCallback);
+
+    Extruder[extruder].PID.max_pwm_limit = 20;
     Extruder[extruder].set_temperature = 25;
+    Extruder[extruder].PID.last_error = 0.0;
 
-    PWM_Open(extruder_pwmMap[extruder]);
+    PWM_Open(pwm);
 }
 
-uint32_t Extruder_GetTemperature(uint32_t extruder)
+float Extruder_GetTemperature(uint32_t extruder)
 {
     return Extruder[extruder].current_temperature;
 }
@@ -32,32 +55,43 @@ void Extruder_SetTemperature(uint32_t extruder, uint32_t temp)
 
 void Temperature_Control(uint32_t extruder)
 {
-    ADC_Read(extruder_adcMap[extruder]);
+    uint32_t adc = extruder_adcMap[extruder];
+    uint32_t pwm = extruder_pwmMap[extruder];
 
-    uint32_t targetTemp = Extruder[extruder].set_temperature;
-    uint32_t currentTemp = Extruder[extruder].current_temperature;
-    float kp = Extruder[extruder].PID.kp;
-    float kd = Extruder[extruder].PID.kd;
-    float ki = Extruder[extruder].PID.ki;
+    ADC_Read(adc);
+
+    float targetTemp = Extruder[extruder].set_temperature;
+    float currentTemp = Extruder[extruder].current_temperature;
+
+    if(currentTemp == 0)
+    {
+        return;
+    }
+
     float lastError = Extruder[extruder].PID.last_error;
 
-    float error = (float)(targetTemp - currentTemp);
+    float error = targetTemp - currentTemp;
 
-    kp += error;
-    kd = error - lastError;
-    Extruder[extruder].PID.ki += error;
-    Extruder[extruder].PID.kd = error - lastError;
+    Extruder[extruder].PID.i += error;
+    Extruder[extruder].PID.d = error - lastError;
 
-    float pwm_duty = (kp * error)+(ki * Extruder[extruder].PID.ki)+(kd * Extruder[extruder].PID.kd);
+    float pwm_duty = (kp * error)+(ki * Extruder[extruder].PID.i)+(kd * Extruder[extruder].PID.d);
 
     if(pwm_duty > Extruder[extruder].PID.max_pwm_limit)
+    {
         pwm_duty = Extruder[extruder].PID.max_pwm_limit;
+    }
+
 
     if(pwm_duty > 0)
-        PWM_SetDutyCycle(extruder_pwmMap[extruder], (pwm_duty*480));
-
+    {
+        PWM_SetDutyCycle(pwm, (uint16_t)(pwm_duty*480));
+    }
     else
-        PWM_SetDutyCycle(extruder_pwmMap[extruder], 0);
+    {
+        PWM_SetDutyCycle(pwm, 0);
+    }
+
 
     Extruder[extruder].PID.last_error = error;
 }

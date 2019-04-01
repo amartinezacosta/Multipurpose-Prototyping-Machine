@@ -154,6 +154,7 @@ void Interpreter_Run(struct sBlock block)
             }
         }
 
+        /*Dwell for non time*/
         else if(block.non_modal[i] == DWELL)
         {
             if(block.delay)
@@ -162,18 +163,21 @@ void Interpreter_Run(struct sBlock block)
             }
         }
 
+        /*Send extruder temperature to host*/
         else if(block.non_modal[i] == SEND_TEMPERATURE)
         {
-            uint32_t t = Extruder_GetTemperature(EXTRUDER1);
-            MSPrintf(UART0, "ok T:%i B:25.0\n", t);
+            float t = Extruder_GetTemperature(EXTRUDER1);
+            MSPrintf(UART0, "ok T:%f B:25.0\n", t);
         }
 
+        /*Send position to host*/
         else if(block.non_modal[i] == SEND_POSITION)
         {
             float *coordinates = (float*)Printer_Get(CURRENT_COORDINATES, NULL);
             MSPrintf(UART0, "ok C: X:%f Y:%f Z:%f E:%f\n", coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
         }
 
+        /*Set coordinate without moving the machine*/
         else if(block.non_modal[i] == SET_COORDINATE)
         {
             uint32_t j;

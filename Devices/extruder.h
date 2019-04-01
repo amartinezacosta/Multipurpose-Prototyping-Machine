@@ -13,22 +13,22 @@ struct sPID{
     uint32_t max_pwm_limit;
     float last_error;
     float error;
-    float kp;
-    float ki;
-    float kd;
+    float p;
+    float i;
+    float d;
 };
 
 struct sExtruder
 {
-    uint32_t current_temperature;
-    uint32_t set_temperature;
+    float current_temperature;
+    float set_temperature;
 
     struct sPID PID;
 };
 
 
 void Extruder_Open(uint32_t extruder);
-uint32_t Extruder_GetTemperature(uint32_t extruder);
+float Extruder_GetTemperature(uint32_t extruder);
 void Extruder_SetTemperature(uint32_t extruder, uint32_t temp);
 void Temperature_Control(uint32_t extruder);
 
