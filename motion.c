@@ -31,7 +31,7 @@ void Motion_Home(uint32_t axis)
             /*Assume axis is going to hit the limit switch, set current axis coordinate to 0*/
             coordinates[i] = 0.0;
             Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
-            //Printer_Set(NEW_COORDINATE, i, &coordinates[i]);
+            Printer_Set(NEW_COORDINATE, i, &coordinates[i]);
 
             //Backoff from limit switch
             backoff[i] = axis_backoff[i];
@@ -83,7 +83,7 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     }
     else
     {
-        motion.delay = 50000; //1ms delay first timeout
+        motion.delay = 4800; //1ms delay first timeout
     }
 
     motion.state = ACCEL;

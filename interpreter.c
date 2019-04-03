@@ -25,7 +25,7 @@ void Interpreter_Run(struct sBlock block)
     //2. set feed rate mode (G93, G94 — inverse time or per minute).
 
     //3. set feed rate (F).
-    if(block.feedrate > MIN_FEEDRATE && block.feedrate < MAX_FEEDRATE)
+    if((block.feedrate > MIN_FEEDRATE) && (block.feedrate < MAX_FEEDRATE))
     {
         Printer_Set(FEEDRATE, NULL, &block.feedrate);
     }

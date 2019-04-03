@@ -92,6 +92,8 @@ void prvInterpolator_Task(void *args)
                     axis_steps[3] -= motion.total;
                 }
 
+                MOTOR_PULSE_DOWN(output);
+
                 /*Calculate next delay for acceleration profile*/
                 switch(motion.state)
                 {
@@ -131,7 +133,6 @@ void prvInterpolator_Task(void *args)
                     break;
                 }
 
-                MOTOR_PULSE_DOWN(output);
                 MOTOR_TIMEOUT(TIMER0, motion.delay);
                 total_steps++;
             }

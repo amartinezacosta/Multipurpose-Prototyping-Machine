@@ -1,13 +1,13 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-#define MAX_FEEDRATE            5000
+#define MAX_FEEDRATE            9000
 #define MIN_FEEDRATE            10
 
 #define STEPS_PER_MM            80
 #define AXIS_COUNT              4
 #define MAX_TRAVEL              {210.0, 210.0, 210.0}
-#define BACKOFF                 {2.0, 2.0 , 2.6}    //mm/min
+#define BACKOFF                 {2.0, 2.0 , 2.0}    //mm/min
 
 #define MODAL_COUNT             13
 
