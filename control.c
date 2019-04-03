@@ -1,14 +1,35 @@
 #include "control.h"
 
+TaskHandle_t xControl_Task;
+
+void Control_Timeout(void *args, uint32_t param)
+{
+    xTaskNotifyGive(xControl_Task);
+}
+
 void prvSystemControl_Task(void *args)
 {
+    Timer32_Open(TIMER1);
+    Timer32_SetCallback(TIMER1, Control_Timeout);
+
+    /*Service control task immediately at startup*/
+    Timer32_Start(TIMER1, 1);
     while(1)
     {
-        /*We should call this task periodically 100ms should be sufficient*/
-
+        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         Temperature_Control(EXTRUDER1);
-        vTaskDelay(48000);
+
+        /*Check for user input here*/
+
+        /*Update LCD here*/
+
+        /*Call this task periodically 10ms/100Hz should be sufficient*/
+        Timer32_Start(TIMER1, 48000);
     }
 }
 
+TaskHandle_t *Control_GetTaskHandle(void)
+{
+    return &xControl_Task;
+}
 

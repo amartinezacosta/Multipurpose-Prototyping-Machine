@@ -31,7 +31,7 @@ void main(void){
     //Create tasks
     xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY+1, Interpreter_GetTaskHandle());
     xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY+2, Interpolator_GetTaskHandle());
-    xTaskCreate(prvSystemControl_Task, "Control", 128, NULL, tskIDLE_PRIORITY, NULL);
+    xTaskCreate(prvSystemControl_Task, "Control", 128, NULL, tskIDLE_PRIORITY, Control_GetTaskHandle());
 
     //Start the RTOS
     vTaskStartScheduler();
