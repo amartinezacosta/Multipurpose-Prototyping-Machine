@@ -33,8 +33,6 @@ void Button_Open(uint32_t button, uint32_t type)
     case EMERGENCY:
         break;
     }
-    //GPIO_Open(LIMITS_PORT, X_LIMIT|Y_LIMIT|Z_LIMIT, false);
-    //GPIO_SetCallback(LIMITS_PORT, X_LIMIT|Y_LIMIT|Z_LIMIT, GPIO_LimitsCallback);
 }
 
 

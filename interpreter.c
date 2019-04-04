@@ -238,12 +238,13 @@ void prvInterpreter_Task(void *args)
         count = lexer(tokens, packet.data);
         if(count)
         {
+            /*Parse and run block if valid tokens were found*/
             block = parse(tokens, count);
             Interpreter_Run(block);
         }
         else
         {
-            //Not tokens found in data packet
+            /*No valid tokens were found*/
             MSPrintf(UART0, "Error: Unknown command: \"%s\"\n", packet.data);
         }
     }

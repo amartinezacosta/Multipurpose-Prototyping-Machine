@@ -44,7 +44,7 @@ void prvInterpolator_Task(void *args)
              * should definitely go into a complete stop. TODO: Research look-ahead
              */
             denom = 1;
-            c32 = motion.delay << 8;
+            c32 = motion.cn << 8;
 
             //Start timer, timeout 1 clock cycle
             Timer32_Start(TIMER0, 1);
@@ -115,13 +115,13 @@ void prvInterpolator_Task(void *args)
                     }
                     denom += 4;
                     c32 -= (c32<<1)/denom;
-                    motion.delay = (c32+128)>>8;
+                    motion.cn = (c32+128)>>8;
 
-                    if(motion.delay <= motion.mdelay)
+                    if(motion.cn <= motion.c0)
                     {
                         motion.state = RUN;
                         step_down = motion.total - total_steps;
-                        motion.delay = motion.mdelay;
+                        motion.cn = motion.c0;
                     }
                     break;
                 case RUN:
@@ -133,7 +133,7 @@ void prvInterpolator_Task(void *args)
                     break;
                 }
 
-                MOTOR_TIMEOUT(TIMER0, motion.delay);
+                MOTOR_TIMEOUT(TIMER0, motion.cn);
                 total_steps++;
             }
 

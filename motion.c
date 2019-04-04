@@ -1,8 +1,8 @@
 #include "motion.h"
 
 uint16_t Direction_PinMask[AXIS_COUNT] = {X_DIR, Y_DIR, Z_DIR, E_DIR};
-float steps_per_mm[AXIS_COUNT] = {80.0, 80.0, 400.0, 170.0};
 
+float steps_per_mm[AXIS_COUNT] = STEPS_PER_MM;
 float max_travel[AXIS_COUNT - 1] = MAX_TRAVEL;
 float axis_backoff[AXIS_COUNT - 1] = BACKOFF;
 
@@ -31,14 +31,14 @@ void Motion_Home(uint32_t axis)
             /*Assume axis is going to hit the limit switch, set current axis coordinate to 0*/
             coordinates[i] = 0.0;
             Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
-            Printer_Set(NEW_COORDINATE, i, &coordinates[i]);
 
-            //Backoff from limit switch
+            /*Backoff from limit switch*/
             backoff[i] = axis_backoff[i];
             Motion_Linear(backoff, 1000);
 
-            //Go towards limit again
+            /*Go towards limit again*/
             Motion_Linear(coordinates, 1000);
+            Printer_Set(NEW_COORDINATE, i, &coordinates[i]);
         }
     }
 }
@@ -49,6 +49,7 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     struct sMotion motion = {0};
     int32_t current[AXIS_COUNT];
     int32_t target[AXIS_COUNT];
+    uint32_t dominant_axis;
     uint32_t stepsps;
     uint32_t i;
 
@@ -65,13 +66,21 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
         }
 
         motion.total = MAX(motion.total, motion.steps[i]);
+
+        /*find dominant axis for velocity*/
+        if(motion.total == motion.steps[i])
+        {
+            dominant_axis = i;
+        }
+
         Printer_Set(CURRENT_COORDINATE, i, &new_coordinates[i]);
     }
 
-    /*steps per second for given feedrate, assuming feedrate is given in mm/min*/
-    stepsps = (feedrate * STEPS_PER_MM)/60;
+    /*steps per second for given feedrate. The motion will use the dominant axis to calculate the amount
+     * of steps per second required to obtain the nominal feedrate. Feedrate is assumed to be in mm/min*/
+    stepsps = (feedrate * steps_per_mm[dominant_axis])/60;
     /*counter delay we are trying to achieve*/
-    motion.mdelay = TIMER_FREQUENCY/stepsps;
+    motion.c0 = TIMER_FREQUENCY/stepsps;
 
     /*Acceleration profile calculations here*/
     motion.mid = (motion.total-1)>>2;
@@ -79,11 +88,13 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     /*if segment is too short, use nominal speed. Use acceleration profile otherwise*/
     if(motion.total < 500)
     {
-        motion.delay = motion.mdelay;
+        /*Use nominal timer counter value*/
+        motion.cn = motion.c0;
     }
     else
     {
-        motion.delay = 4800; //1ms delay first timeout
+        /*1st timer counter value for real time acceleration*/
+        motion.cn = ACCELERATION;
     }
 
     motion.state = ACCEL;
