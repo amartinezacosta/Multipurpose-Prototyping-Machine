@@ -1,7 +1,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-#define MAX_FEEDRATE            15000
+#define MAX_FEEDRATE            10500
 #define MIN_FEEDRATE            10
 
 #define AXIS_COUNT              4

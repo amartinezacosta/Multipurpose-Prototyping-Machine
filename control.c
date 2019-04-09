@@ -1,3 +1,13 @@
+/*The COntrol task should perform the following
+ *
+ * 1. Check temperature of extruder
+ * 2. Check for user input
+ * 3. Update Display
+ * 4. Update of 100Hz
+ *
+ * The task relies on several devices such as the extruder, display and io from user input
+ * */
+
 #include "control.h"
 
 TaskHandle_t xControl_Task;

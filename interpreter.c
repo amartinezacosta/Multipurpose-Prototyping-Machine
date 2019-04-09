@@ -1,9 +1,9 @@
 /*The Interpreter task should perform the following
  *
- * 1. wait for a packet of data
- * 2. separate the packet into tokens for the parser
- * 3. parse the tokens
- * 4. execute the block instruction
+ * 1. Wait for a packet of data
+ * 2. Separate the packet into tokens for the parser
+ * 3. Parse the tokens
+ * 4. Execute the block instruction
  * 5. Notify host of success/failure of instruction
  *
  * This tasks relies on notifications from a communication channel. We will receive a notification when there is a string in the
@@ -60,10 +60,10 @@ void Interpreter_Run(struct sBlock block)
         switch(*(uint32_t*)Printer_Get(MODAL, 7))
         {
         case SPINDLE_STOP:
-            PWM_SetDutyCycle(PWM1, 0);
+            //PWM_SetDutyCycle(PWM1, 0);
             break;
         case SPINDLE_CLOCKWISE:
-            PWM_SetDutyCycle(PWM1, *(uint32_t*)Printer_Get(SPINDLE, NULL));
+            //PWM_SetDutyCycle(PWM1, *(uint32_t*)Printer_Get(SPINDLE, NULL));
             break;
         }
     }
@@ -229,7 +229,7 @@ void prvInterpreter_Task(void *args)
 
     while(1)
     {
-        /*We will receive a notification from communications layer*/
+        /*We will receive a notification from the communications layer*/
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         /*At this point we know there is something on the queue, no point in checking*/
         xQueueReceive(Communications_GetPacketQueue(), &packet, portMAX_DELAY);
