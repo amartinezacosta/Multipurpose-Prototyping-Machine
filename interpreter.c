@@ -174,7 +174,10 @@ void Interpreter_Run(struct sBlock block)
         else if(block.non_modal[i] == SEND_POSITION)
         {
             float *coordinates = (float*)Printer_Get(CURRENT_COORDINATES, NULL);
-            MSPrintf(UART0, "ok C: X:%f Y:%f Z:%f E:%f\n", coordinates[0], coordinates[1], coordinates[2], coordinates[3]);
+            float *new = (float*)Printer_Get(NEW_COORDINATES, NULL);
+            MSPrintf(UART0, "ok C: X:%f Y:%f Z:%f E:%f NX:%f NY:%f NZ:%f, NE:%f\n",
+                     coordinates[0], coordinates[1], coordinates[2], coordinates[3],
+                     new[0], new[1], new[2], new[3]);
         }
 
         /*Set coordinate without moving the machine*/
@@ -245,7 +248,7 @@ void prvInterpreter_Task(void *args)
         else
         {
             /*No valid tokens were found*/
-            MSPrintf(UART0, "Error: Unknown command: \"%s\"\n", packet.data);
+            MSPrintf(UART0, "Error: Unknown command: %s\n", packet.data);
         }
     }
 

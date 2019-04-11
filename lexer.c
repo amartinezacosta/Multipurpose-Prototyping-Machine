@@ -33,7 +33,7 @@ uint32_t getToken(struct sToken *token, char *string)
     if(is_alpha(*string))
     {
         token->token[i++] = *string++;
-        if(*string == '+' || *string == '-' || *string == '.' || is_digit(*string))
+        if((*string == '+') || (*string == '-') || (*string == '.') || (is_digit(*string)))
         {
             token->token[i++] = *string++;
             while(is_digit(*string) || *string == '.')
@@ -41,9 +41,9 @@ uint32_t getToken(struct sToken *token, char *string)
                 token->token[i++] = *string++;
             }
         }
-        else if(is_alpha(*string) || *string == '\r' || *string == '\n')
+        else if(!is_alpha(*string))
         {
-
+            return 0;
         }
         else
         {

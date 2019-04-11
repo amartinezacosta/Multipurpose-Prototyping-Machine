@@ -7,12 +7,12 @@
 #define AXIS_COUNT              4
 #define STEPS_PER_MM            {80.0, 80.0, 400.0, 170.0}
 #define MAX_TRAVEL              {210.0, 210.0, 210.0}
-#define BACKOFF                 {2.0, 2.0 , 2.0}    //mm/min
+#define BACKOFF                 {2.0, 2.0, 2.0}
 #define ACCELERATION            48000
 
 #define MODAL_COUNT             13
 
-#define MOTION_QUEUE_SIZE       10
+#define MOTION_QUEUE_SIZE       20
 #define BLOCK_QUEUE_SIZE        10
 
 #define TASK_SIZE               512

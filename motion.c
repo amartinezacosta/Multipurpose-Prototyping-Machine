@@ -35,12 +35,13 @@ void Motion_Home(uint32_t axis)
             /*Backoff from limit switch*/
             backoff[i] = axis_backoff[i];
             Motion_Linear(backoff, 1000);
+            Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
 
             /*Go towards limit again*/
-            Motion_Linear(coordinates, 1000);
-            Printer_Set(NEW_COORDINATE, i, &coordinates[i]);
+            //Motion_Linear(coordinates, 1000);
         }
     }
+
 }
 
 void Motion_Linear(float *new_coordinates, uint32_t feedrate)
@@ -82,6 +83,12 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     /*counter delay we are trying to achieve*/
     motion.c0 = TIMER_FREQUENCY/stepsps;
 
+    /*Find entry velocity*/
+
+    /*Find final velocity*/
+
+
+
     /*Acceleration profile calculations here*/
     motion.mid = (motion.total-1)>>2;
 
@@ -108,7 +115,7 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
         MSPrintf(UART0, "Error: Motion took longer than expected\n");
     }
 
-    /*Motion is in the queue*/
+    /*Motion is in the queue return*/
 }
 
 
