@@ -1,7 +1,7 @@
 #include "laser.h"
 
 struct sLaser Lasers[LASER_COUNT];
-uint32_t laser_pwmMap[LASER_COUNT] = {PWM0, PWM1};
+uint32_t laser_pwmMap[LASER_COUNT] = {PWM5};
 
 
 void Laser_Open(uint32_t laser)
@@ -17,7 +17,7 @@ void Laser_Open(uint32_t laser)
 void Laser_SetIntensity(uint32_t laser, uint32_t intensity)
 {
     /*Check intensity boundaries*/
-    if((intensity > Lasers[laser].max) || (intensity < Lasers[laser].min))
+    if((intensity > Lasers[laser].max) && (intensity < Lasers[laser].min))
     {
         return;
     }

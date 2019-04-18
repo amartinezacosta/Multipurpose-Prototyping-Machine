@@ -5,6 +5,8 @@
 #include "Devices/motor.h"
 #include "Devices/button.h"
 #include "Devices/extruder.h"
+#include "Devices/fan.h"
+#include "Devices/laser.h"
 
 void main(void){
     //Initialize printer variables
@@ -25,9 +27,15 @@ void main(void){
     Button_Open(Y_ENDSTOP_BUTTON, ENDSTOP);
     Button_Open(Z_ENDSTOP_BUTTON, ENDSTOP);
 
-    //Open Extruder 0
+    //Open Extruder 1
     Extruder_Open(EXTRUDER1);
 
+    //Open Laser Module 0
+    Laser_Open(LASER0);
+
+    //Open Fan 0, set speed to 75%
+    Fan_Open(FAN0);
+    Fan_SetSpeed(FAN0, 36000);
 
     //Create tasks
     xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY+1, Interpreter_GetTaskHandle());

@@ -4,11 +4,9 @@
 #include "Drivers/PWM_Driver.h"
 #include "config.h"
 
-#define LASER_COUNT     2
+#define LASER_COUNT     1
 
-#define LASER1          0
-#define LASER2          1
-#define LASER3          2
+#define LASER0          0
 
 struct sLaser
 {

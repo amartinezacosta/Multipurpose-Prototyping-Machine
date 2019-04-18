@@ -10,7 +10,7 @@ const float ki = 0.0005;
 
 void TemperatureCallback(void* param, uint32_t sample)
 {
-    /*TODO: We should change between ADC channels. Rigth now the void *param parameter does
+    /*TODO: We should change between ADC channels. Right now the void *param parameter does
      * contain a valid ADC channel, it should be look into!.
      */
     float voltage;
@@ -88,7 +88,6 @@ void Temperature_Control(uint32_t extruder)
     {
         pwm_duty = Extruder[extruder].PID.max_pwm_limit;
     }
-
 
     if(pwm_duty > 0)
     {
