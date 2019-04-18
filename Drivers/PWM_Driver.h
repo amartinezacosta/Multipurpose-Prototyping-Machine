@@ -9,10 +9,10 @@
 #define PWM1    1   //P2.5, TA0.2
 #define PWM2    2   //P2.6, TA0.3
 #define PWM3    3   //P2.7, TA0.4
-#define PWM4    4   //P7.7, TA1.1
-#define PWM5    5   //P7.6, TA1.2
-#define PWM6    6   //P7.5, TA1.3
-#define PWM7    7   //P7.4, TA1.4
+#define PWM4    4   //P8.2, TA3.2
+#define PWM5    5   //P9.2, TA3.3
+#define PWM6    6   //P10.4, TA3.0
+#define PWM7    7   //P9.3,  TA3.4
 
 
 void PWM_Open(uint32_t pwm);

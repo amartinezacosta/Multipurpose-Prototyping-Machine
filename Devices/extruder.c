@@ -20,7 +20,7 @@ void TemperatureCallback(void* param, uint32_t sample)
     voltage = (float)((sample/4095.0)*3.3);
     if(voltage > 2.8)
     {
-        temperature = -138.05*voltage + 486.31;
+        temperature = -166.5*voltage + 569.45;
     }
     else
     {

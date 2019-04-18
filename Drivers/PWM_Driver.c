@@ -13,18 +13,18 @@ Timer_A_PWMConfig pwmConfigs[PWM_COUNT] =
 
 
 uint32_t PWM_MapPin[PWM_COUNT] = {GPIO_PIN4, GPIO_PIN5, GPIO_PIN6, GPIO_PIN7,
-                          GPIO_PIN7, GPIO_PIN6, GPIO_PIN5, GPIO_PIN4};
+                          GPIO_PIN2, GPIO_PIN2, GPIO_PIN4, GPIO_PIN3};
 
 uint32_t PWM_MapPort[PWM_COUNT] = {GPIO_PORT_P2, GPIO_PORT_P2, GPIO_PORT_P2, GPIO_PORT_P2,
-                                   GPIO_PORT_P7, GPIO_PORT_P7, GPIO_PORT_P7, GPIO_PORT_P7};
+                                   GPIO_PORT_P8, GPIO_PORT_P9, GPIO_PORT_P10, GPIO_PORT_P9};
 
 uint32_t PWM_MapTimer[PWM_COUNT] = {TIMER_A0_BASE, TIMER_A0_BASE, TIMER_A0_BASE, TIMER_A0_BASE,
-                                    TIMER_A1_BASE, TIMER_A1_BASE, TIMER_A1_BASE, TIMER_A1_BASE};
+                                    TIMER_A3_BASE, TIMER_A3_BASE, TIMER_A3_BASE, TIMER_A3_BASE};
 
 uint32_t PWM_MapCaptureCompareRegister[PWM_COUNT] = {TIMER_A_CAPTURECOMPARE_REGISTER_1, TIMER_A_CAPTURECOMPARE_REGISTER_2,
                                                      TIMER_A_CAPTURECOMPARE_REGISTER_3, TIMER_A_CAPTURECOMPARE_REGISTER_4,
-                                                     TIMER_A_CAPTURECOMPARE_REGISTER_1, TIMER_A_CAPTURECOMPARE_REGISTER_2,
-                                                     TIMER_A_CAPTURECOMPARE_REGISTER_3, TIMER_A_CAPTURECOMPARE_REGISTER_4};
+                                                     TIMER_A_CAPTURECOMPARE_REGISTER_2, TIMER_A_CAPTURECOMPARE_REGISTER_3,
+                                                     TIMER_A_CAPTURECOMPARE_REGISTER_0, TIMER_A_CAPTURECOMPARE_REGISTER_4};
 
 void PWM_Open(uint32_t pwm)
 {

@@ -22,11 +22,11 @@ void Motion_Home(uint32_t axis)
 
             /*Separate from limit switch*/
             coordinates[i] += axis_backoff[i];
-            Motion_Linear(coordinates, 1000);
+            Motion_Linear(coordinates, 1500);
 
             /*Go towards limit switch*/
             coordinates[i] = -max_travel[i];
-            Motion_Linear(coordinates, MAX_FEEDRATE);
+            Motion_Linear(coordinates, 2000);
 
             /*Assume axis is going to hit the limit switch, set current axis coordinate to 0*/
             coordinates[i] = 0.0;
@@ -34,22 +34,34 @@ void Motion_Home(uint32_t axis)
 
             /*Backoff from limit switch*/
             backoff[i] = axis_backoff[i];
-            Motion_Linear(backoff, 1000);
-            Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
+            Motion_Linear(backoff, 1500);
+            //Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
 
             /*Go towards limit again*/
-            //Motion_Linear(coordinates, 1000);
+            Motion_Linear(coordinates, 1000);
+
+            Motion_Linear(backoff, 1500);
+            Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
         }
     }
 
+}
+
+uint32_t Motion_Map(float d, uint32_t x2, uint32_t x1, uint32_t y2, uint32_t y1)
+{
+    uint32_t m = (y2-y1)/(x2-x1);
+    uint32_t y = m*((uint32_t)d-x1) + y1;
+
+    return y;
 }
 
 void Motion_Linear(float *new_coordinates, uint32_t feedrate)
 {
     //Queue motion
     struct sMotion motion = {0};
-    int32_t current[AXIS_COUNT];
-    int32_t target[AXIS_COUNT];
+    int32_t current[AXIS_COUNT];    //Current coordinate (steps)
+    int32_t target[AXIS_COUNT];     //target coordinate (steps)
+    float axis_delta[AXIS_COUNT];   //total distance to move per axis (mm)
     uint32_t dominant_axis;
     uint32_t stepsps;
     uint32_t i;
@@ -68,6 +80,10 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
 
         motion.total = MAX(motion.total, motion.steps[i]);
 
+        /*Calculate distance per axis in mm, to total distance*/
+        axis_delta[i] = (float)motion.steps[i]/steps_per_mm[i];
+        motion.distance += axis_delta[i]*axis_delta[i];
+
         /*find dominant axis for velocity*/
         if(motion.total == motion.steps[i])
         {
@@ -76,6 +92,15 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
 
         Printer_Set(CURRENT_COORDINATE, i, &new_coordinates[i]);
     }
+
+    if(motion.total == 0)
+    {
+        return;
+    }
+
+    motion.distance = sqrt(motion.distance);
+
+
 
     /*steps per second for given feedrate. The motion will use the dominant axis to calculate the amount
      * of steps per second required to obtain the nominal feedrate. Feedrate is assumed to be in mm/min*/
@@ -88,21 +113,11 @@ void Motion_Linear(float *new_coordinates, uint32_t feedrate)
     /*Find final velocity*/
 
 
-
     /*Acceleration profile calculations here*/
     motion.mid = (motion.total-1)>>2;
 
-    /*if segment is too short, use nominal speed. Use acceleration profile otherwise*/
-    if(motion.total < 500)
-    {
-        /*Use nominal timer counter value*/
-        motion.cn = motion.c0;
-    }
-    else
-    {
-        /*1st timer counter value for real time acceleration*/
-        motion.cn = ACCELERATION;
-    }
+    /*map initial delay which determines acceleration profile by mapping max travel and minimum travel to nominal delay and max acceleration*/
+    motion.cn = Motion_Map(motion.distance, max_travel[dominant_axis], 1, ACCELERATION, motion.c0);
 
     motion.state = ACCEL;
 

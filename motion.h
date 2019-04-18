@@ -25,6 +25,7 @@ struct sMotion
     uint16_t direction;
     uint32_t total;
     int32_t steps[AXIS_COUNT];
+    float distance;
     int32_t c0;
     int32_t cn;
     int32_t mid;
