@@ -3,6 +3,7 @@
 
 #include "Drivers/PWM_Driver.h"
 #include "Drivers/ADC_Driver.h"
+#include "Devices/fan.h"
 
 #define EXTRUDER_COUNT      2
 

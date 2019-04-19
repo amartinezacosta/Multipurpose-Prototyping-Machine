@@ -22,10 +22,10 @@
 
 #define MAX_NON_MODAL           5
 
-#define LASER_MAX_INTENSITY     24000000
+#define LASER_MAX_INTENSITY     24000
 #define LASER_MIN_INTENSITY     0
 
-#define SPINDLE_MAX_RPM         24000000
+#define SPINDLE_MAX_RPM         24000
 #define SPINDLE_MIN_RPM         0
 
 

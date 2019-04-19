@@ -37,4 +37,5 @@
 #define Y_ENDSTOP                 GPIO_PIN6
 #define Z_ENDSTOP                 GPIO_PIN7
 
+
 #endif /* PINMAP_H_ */
