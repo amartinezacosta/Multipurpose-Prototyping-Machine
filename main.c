@@ -30,8 +30,8 @@ void main(void){
     Extruder_Open(EXTRUDER1);
 
     //Open Laser Module 0
-    Laser_Open(LASER0);
-    Laser_SetIntensity(LASER0, 5000);
+    //Laser_Open(LASER0);
+    //Laser_SetIntensity(LASER0, 5000);
 
     //Open Hetbed PWM module
     //PWM_Open(PWM1);
