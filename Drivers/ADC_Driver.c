@@ -34,7 +34,7 @@ void ADC_Open(uint32_t adc)
 
     MAP_ADC14_enableModule();
     MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_1, 0);
-    MAP_ADC14_setResolution(ADC_12BIT);
+    MAP_ADC14_setResolution(ADC_14BIT);
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P4, pin, GPIO_TERTIARY_MODULE_FUNCTION);
     MAP_ADC14_enableSampleTimer(ADC_MANUAL_ITERATION);
     MAP_ADC14_enableConversion();
