@@ -6,7 +6,10 @@ uint32_t extruder_pwmMap[EXTRUDER_COUNT] = {PWM1, PWM3};
 
 const float kp = .7;
 const float kd = 0.05;
-const float ki = 0.0005;
+const float ki = 0.0001;
+
+#define MAX_INTEGRAL        500
+#define MIN_INTEGRAL        -500
 
 #define NUMTEMPS 20
 int32_t temptable[NUMTEMPS][2] = {
@@ -133,6 +136,16 @@ void Temperature_Control(uint32_t extruder)
 
     Extruder[extruder].PID.i += error;
     Extruder[extruder].PID.d = error - lastError;
+
+    if(Extruder[extruder].PID.i > MAX_INTEGRAL)
+    {
+        Extruder[extruder].PID.i = MAX_INTEGRAL;
+    }
+
+    if(Extruder[extruder].PID.i < MIN_INTEGRAL)
+    {
+        Extruder[extruder].PID.i = MIN_INTEGRAL;
+    }
 
     float pwm_duty = (kp * error)+(ki * Extruder[extruder].PID.i)+(kd * Extruder[extruder].PID.d);
 
