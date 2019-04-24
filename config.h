@@ -5,9 +5,9 @@
 #define MIN_FEEDRATE            10
 
 #define AXIS_COUNT              4
-#define STEPS_PER_MM            {80.0, 80.0, 400.0, 170.0}
+#define STEPS_PER_MM            {80.0, 80.0, 400.0, 56.0}
 #define MAX_TRAVEL              {210.0, 210.0, 210.0}
-#define BACKOFF                 {2.0, 2.0, 0.3}
+#define BACKOFF                 {2.0, 2.0, 2.0}
 #define ACCELERATION            48000
 
 #define MODAL_COUNT             13

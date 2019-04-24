@@ -35,13 +35,13 @@ void Motion_Home(uint32_t axis)
             /*Backoff from limit switch*/
             backoff[i] = axis_backoff[i];
             Motion_Linear(backoff, 1500);
-            //Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
+            Printer_Set(CURRENT_COORDINATE, i, &backoff[i]);
 
             /*Go towards limit again*/
             Motion_Linear(coordinates, 1000);
 
-            Motion_Linear(backoff, 1500);
-            Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
+            //Motion_Linear(backoff, 1500);
+            //Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
         }
     }
 

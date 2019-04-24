@@ -63,35 +63,37 @@ void ADC14_IRQHandler(void)
 {
     uint64_t status = MAP_ADC14_getEnabledInterruptStatus();
     uint32_t value;
-    uint32_t adc;
+    //uint32_t adc;
+    struct sADCData adcData;
     MAP_ADC14_clearInterruptFlag(status);
 
     if (ADC_INT8 & status)
     {
-        adc = ADC0;
+        adcData.ADC = ADC0;
         value = MAP_ADC14_getResult(ADC_MEM8);
     }
 
     else if(ADC_INT6 & status)
     {
-        adc = ADC1;
+        adcData.ADC = ADC1;
         value = MAP_ADC14_getResult(ADC_MEM6);
     }
 
     else if(ADC_INT7 & status)
     {
-        adc = ADC2;
+        adcData.ADC = ADC2;
         value = MAP_ADC14_getResult(ADC_MEM7);
     }
 
     else if(ADC_INT13 & status)
     {
-        adc = ADC3;
+        adcData.ADC = ADC3;
         value = MAP_ADC14_getResult(ADC_MEM13);
     }
 
+    adcData.data = value;
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    xTimerPendFunctionCallFromISR(ADC_Callbacks[adc], &adc, value, &xHigherPriorityTaskWoken);
+    xTimerPendFunctionCallFromISR(ADC_Callbacks[adcData.ADC], &adcData, value, &xHigherPriorityTaskWoken);
 
 
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);

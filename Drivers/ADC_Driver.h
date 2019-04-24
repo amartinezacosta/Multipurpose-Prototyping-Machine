@@ -12,6 +12,12 @@
 #define ADC2    2       //P4.6
 #define ADC3    3       //P4.0
 
+struct sADCData
+{
+    uint32_t ADC;
+    uint16_t data;
+};
+
 void ADC_Open(uint32_t adc);
 void ADC_Read(uint32_t adc);
 void ADC_SetCallback(uint32_t adc, void(*callback)(void*, uint32_t));

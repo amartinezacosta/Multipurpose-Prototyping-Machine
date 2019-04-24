@@ -4,6 +4,7 @@
 #include "Drivers/PWM_Driver.h"
 #include "Drivers/ADC_Driver.h"
 #include "Devices/fan.h"
+#include "Devices/thermistor.h"
 
 #define EXTRUDER_COUNT      2
 
@@ -23,8 +24,11 @@ struct sExtruder
 {
     float current_temperature;
     float set_temperature;
-
-    struct sPID PID;
+    float last_error;
+    float proportional;
+    float derivative;
+    float integral;
+    uint32_t max_duty;
 };
 
 
