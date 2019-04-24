@@ -8,17 +8,8 @@
 
 #define EXTRUDER_COUNT      2
 
-#define EXTRUDER1           0
-#define EXTRUDER2           1
-
-struct sPID{
-    uint32_t max_pwm_limit;
-    float last_error;
-    float error;
-    float p;
-    float i;
-    float d;
-};
+#define EXTRUDER0           0
+#define EXTRUDER1           1
 
 struct sExtruder
 {

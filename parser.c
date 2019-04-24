@@ -48,6 +48,14 @@ struct sBlock parse(struct sToken *tokens, uint32_t count)
                 block.modal[6] = MILIMETERS;
                 block.modal_flags |= BIT_SHIFT(6);
                 break;
+            case 93:
+                block.modal[5] = INVERSE_TIME;
+                block.modal_flags |= BIT_SHIFT(5);
+                break;
+            case 94:
+                block.modal[5] = UNITS_TIME;
+                block.modal_flags |= BIT_SHIFT(5);
+                break;
             case 92:
                 block.non_modal[j++] = SET_COORDINATE;
                 break;
@@ -98,6 +106,9 @@ struct sBlock parse(struct sToken *tokens, uint32_t count)
                 block.modal[7] = SPINDLE_STOP;
                 block.modal_flags |= BIT_SHIFT(7);
                 break;
+            case 104:
+                block.non_modal[j++] = SET_TEMPERATURE;
+                break;
             case 105:
                 block.non_modal[j++] = SEND_TEMPERATURE;
                 break;
@@ -105,7 +116,7 @@ struct sBlock parse(struct sToken *tokens, uint32_t count)
                 block.non_modal[j++] = SEND_POSITION;
                 break;
             case 109:
-                block.modal[6] = SET_TEMPERATURE;
+                block.modal[6] = SET_TEMPERATURE_WAIT;
                 block.modal_flags |= BIT_SHIFT(6);
                 break;
                 /*ADD M MORE COMMANDS HERE*/

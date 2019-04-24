@@ -1,7 +1,7 @@
 #include "extruder.h"
 
 struct sExtruder Extruder[EXTRUDER_COUNT];
-uint32_t extruder_thermistorMap[EXTRUDER_COUNT] = {THERMISTOR0};
+uint32_t extruder_thermistorMap[EXTRUDER_COUNT] = {THERMISTOR0, THERMISTOR2};
 uint32_t extruder_pwmMap[EXTRUDER_COUNT] = {PWM1, PWM3};
 
 const float kp = .7;

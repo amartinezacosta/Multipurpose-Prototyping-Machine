@@ -23,10 +23,19 @@ void Interpreter_Run(struct sBlock block)
     //1. comment (includes message).
 
     //2. set feed rate mode (G93, G94 — inverse time or per minute).
+    if(block.modal_flags & BIT_SHIFT(5))
+    {
+        Printer_Set(MODAL, 5, &block.modal[5]);
+    }
 
     //3. set feed rate (F).
     if((block.feedrate > MIN_FEEDRATE) && (block.feedrate < MAX_FEEDRATE))
     {
+        if(*(uint32_t*)Printer_Get(MODAL, 5) == INVERSE_TIME)
+        {
+            block.feedrate = 1/block.feedrate;
+        }
+
         Printer_Set(FEEDRATE, NULL, &block.feedrate);
     }
 
@@ -44,10 +53,11 @@ void Interpreter_Run(struct sBlock block)
         Printer_Set(MODAL, 6, &block.modal[6]);
         switch(*(uint32_t*)Printer_Get(MODAL, 6))
         {
-        case SET_TEMPERATURE:
+        case SET_TEMPERATURE_WAIT:
             if(block.spindle > -1)
             {
                 Extruder_SetTemperature(EXTRUDER1, block.spindle);
+                while(Extruder_GetTemperature(EXTRUDER1) < block.spindle);
             }
             break;
         }
@@ -193,6 +203,11 @@ void Interpreter_Run(struct sBlock block)
                     Printer_Set(NEW_COORDINATE, j, &block.coordinates[j]);
                 }
             }
+        }
+
+        else if(block.non_modal[i] == SET_TEMPERATURE)
+        {
+            Extruder_SetTemperature(EXTRUDER1, block.spindle);
         }
     }
 

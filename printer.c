@@ -8,6 +8,7 @@ void Printer_Init(void)
 {
     Printer.modal[3] = ABSOLUTE;
     Printer.modal[6] = MILIMETERS;
+    Printer.modal[5] = UNITS_TIME;
     Printer.modal[0] = RAPID_POSITIONING;
 
     //Assume machine is homed

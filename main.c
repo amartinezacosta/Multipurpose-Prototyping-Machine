@@ -46,6 +46,8 @@ void main(void){
     xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY+2, Interpolator_GetTaskHandle());
     xTaskCreate(prvSystemControl_Task, "Control", 128, NULL, tskIDLE_PRIORITY, Control_GetTaskHandle());
 
+    MSPrintf(UART0, "start\n");
+
     //Start the RTOS
     vTaskStartScheduler();
 
