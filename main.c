@@ -38,8 +38,8 @@ void main(void){
     //PWM_SetDutyCycle(PWM1, 24000);
 
     //Open Fan 0, set speed to 75%
-    Fan_Open(FAN0);
-    Fan_SetRPM(FAN0, 36000);
+    //Fan_Open(FAN0);
+    //Fan_SetRPM(FAN0, 36000);
 
     //Create tasks
     xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY+1, Interpreter_GetTaskHandle());

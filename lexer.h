@@ -7,14 +7,12 @@
 
 #define MAX_TOKEN_SIZE      12
 
-
-
-struct sToken
+typedef struct sToken
 {
     char token[MAX_TOKEN_SIZE];
-};
+}Token_t;
 
 
-uint32_t lexer(struct sToken *tokens, char *string);
+uint32_t lexer(Token_t *tokens, char *string);
 
 #endif /* LEXER_H_ */

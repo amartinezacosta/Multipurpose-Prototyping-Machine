@@ -18,7 +18,7 @@ bool is_alpha(const char c)
 }
 
 
-uint32_t getToken(struct sToken *token, char *string)
+uint32_t getToken(Token_t *token, char *string)
 {
     char *s = string;
     uint32_t i = 0;
@@ -101,7 +101,7 @@ uint32_t getToken(struct sToken *token, char *string)
 }
 
 //The lexer identifies the individual allowed tokens in a sentence
-uint32_t lexer(struct sToken *tokens, char *string)
+uint32_t lexer(Token_t *tokens, char *string)
 {
     uint32_t size;
     uint32_t i = 0;

@@ -12,6 +12,15 @@
 #include "printer.h"
 #include "motion.h"
 #include "Devices/Extruder.h"
+#include "default.h"
+
+#define MAX_HANDLERS        40
+
+typedef struct sGcodeHandler
+{
+    char *command;
+    void (*handler)(uint32_t, Token_t*);
+}GcodeHandler_t;
 
 void prvInterpreter_Task(void *args);
 TaskHandle_t *Interpreter_GetTaskHandle(void);
