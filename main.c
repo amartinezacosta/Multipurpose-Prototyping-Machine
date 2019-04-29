@@ -27,7 +27,7 @@ void main(void){
     Button_Open(Z_ENDSTOP_BUTTON, ENDSTOP);
 
     //Open Extruder 1
-    Extruder_Open(EXTRUDER1);
+    Extruder_Open(EXTRUDER0);
 
     //Open Laser Module 0
     //Laser_Open(LASER0);

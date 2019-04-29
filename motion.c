@@ -22,11 +22,11 @@ void Motion_Home(uint32_t axis)
 
             /*Separate from limit switch*/
             coordinates[i] += axis_backoff[i];
-            Motion_Linear(coordinates, 1500);
+            Motion_Linear(coordinates, 800);
 
             /*Go towards limit switch*/
             coordinates[i] = -max_travel[i];
-            Motion_Linear(coordinates, 2000);
+            Motion_Linear(coordinates, 1500);
 
             /*Assume axis is going to hit the limit switch, set current axis coordinate to 0*/
             coordinates[i] = 0.0;
@@ -34,14 +34,14 @@ void Motion_Home(uint32_t axis)
 
             /*Backoff from limit switch*/
             backoff[i] = axis_backoff[i];
-            Motion_Linear(backoff, 1500);
+            Motion_Linear(backoff, 800);
             Printer_Set(CURRENT_COORDINATE, i, &backoff[i]);
 
             /*Go towards limit again*/
-            Motion_Linear(coordinates, 1000);
+            Motion_Linear(coordinates, 800);
 
-            //Motion_Linear(backoff, 1500);
-            //Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
+            Motion_Linear(backoff, 800);
+            Printer_Set(CURRENT_COORDINATE, i, &coordinates[i]);
         }
     }
 

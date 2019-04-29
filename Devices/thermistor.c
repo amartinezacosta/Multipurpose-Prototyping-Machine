@@ -38,6 +38,11 @@ void Thermistor_Callback(void* param, uint32_t sample)
     float slope;
     float deltax;
     float deltay;
+    uint16_t adc;
+    uint16_t value;
+
+    adc = sample >> 16;
+    value = sample & 0x0000FFFF;
 
     uint32_t i;
     for(i = 0; i < NUMTEMPS; i++)
@@ -50,14 +55,14 @@ void Thermistor_Callback(void* param, uint32_t sample)
 
             slope = deltay/deltax;
 
-            temperature = slope*((float)sample - (float)temptable[i-1][0]) + (float)temptable[i-1][1];
+            temperature = slope*((float)value - (float)temptable[i-1][0]) + (float)temptable[i-1][1];
 
             if(temperature > 255)
             {
                 temperature = 255;
             }
 
-            Thermistors[0].temperature = temperature;
+            Thermistors[adc].temperature = temperature;
             break;
         }
     }

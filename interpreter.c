@@ -56,8 +56,11 @@ void Interpreter_Run(struct sBlock block)
         case SET_TEMPERATURE_WAIT:
             if(block.spindle > -1)
             {
-                Extruder_SetTemperature(EXTRUDER1, block.spindle);
-                while(Extruder_GetTemperature(EXTRUDER1) < block.spindle);
+                Extruder_SetTemperature(EXTRUDER0, block.spindle);
+                while(Extruder_GetTemperature(EXTRUDER0) < block.spindle - 30)
+                {
+                    vTaskDelay(48000);
+                }
             }
             break;
         }
@@ -176,7 +179,7 @@ void Interpreter_Run(struct sBlock block)
         /*Send extruder temperature to host*/
         else if(block.non_modal[i] == SEND_TEMPERATURE)
         {
-            float t = Extruder_GetTemperature(EXTRUDER1);
+            float t = Extruder_GetTemperature(EXTRUDER0);
             MSPrintf(UART0, "ok T:%f B:25.0\n", t);
         }
 
@@ -207,7 +210,7 @@ void Interpreter_Run(struct sBlock block)
 
         else if(block.non_modal[i] == SET_TEMPERATURE)
         {
-            Extruder_SetTemperature(EXTRUDER1, block.spindle);
+            Extruder_SetTemperature(EXTRUDER0, block.spindle);
         }
     }
 

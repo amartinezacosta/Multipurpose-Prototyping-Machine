@@ -6,10 +6,10 @@ uint32_t extruder_pwmMap[EXTRUDER_COUNT] = {PWM1, PWM3};
 
 const float kp = .7;
 const float kd = 0.05;
-const float ki = 0.0003;
+const float ki = 0.0004;
 
-#define MAX_INTEGRAL        500
-#define MIN_INTEGRAL        -500
+#define MAX_INTEGRAL        700
+#define MIN_INTEGRAL        -700
 
 void Extruder_Open(uint32_t extruder)
 {

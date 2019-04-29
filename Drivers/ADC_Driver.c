@@ -62,38 +62,39 @@ void ADC_SetCallback(uint32_t adc, void(*callback)(void*, uint32_t))
 void ADC14_IRQHandler(void)
 {
     uint64_t status = MAP_ADC14_getEnabledInterruptStatus();
-    uint32_t value;
-    //uint32_t adc;
-    struct sADCData adcData;
+    uint16_t value;
+    uint16_t adc;
+    uint32_t adcAndValue;
     MAP_ADC14_clearInterruptFlag(status);
 
     if (ADC_INT8 & status)
     {
-        adcData.ADC = ADC0;
+        adc = ADC0;
         value = MAP_ADC14_getResult(ADC_MEM8);
     }
 
     else if(ADC_INT6 & status)
     {
-        adcData.ADC = ADC1;
+        adc = ADC1;
         value = MAP_ADC14_getResult(ADC_MEM6);
     }
 
     else if(ADC_INT7 & status)
     {
-        adcData.ADC = ADC2;
+        adc = ADC2;
         value = MAP_ADC14_getResult(ADC_MEM7);
     }
 
     else if(ADC_INT13 & status)
     {
-        adcData.ADC = ADC3;
+        adc = ADC3;
         value = MAP_ADC14_getResult(ADC_MEM13);
     }
 
-    adcData.data = value;
+    adcAndValue = (adc << 16) | value;
+
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    xTimerPendFunctionCallFromISR(ADC_Callbacks[adcData.ADC], &adcData, value, &xHigherPriorityTaskWoken);
+    xTimerPendFunctionCallFromISR(ADC_Callbacks[adc], NULL, adcAndValue, &xHigherPriorityTaskWoken);
 
 
     portYIELD_FROM_ISR(xHigherPriorityTaskWoken);

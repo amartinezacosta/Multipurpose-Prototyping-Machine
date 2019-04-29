@@ -27,7 +27,7 @@ void prvSystemControl_Task(void *args)
     while(1)
     {
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-        Temperature_Control(EXTRUDER1);
+        Temperature_Control(EXTRUDER0);
 
         /*Check for user input here*/
 
