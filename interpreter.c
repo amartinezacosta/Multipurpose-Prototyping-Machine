@@ -28,6 +28,7 @@ GcodeHandler_t GcodeHandlers[MAX_HANDLERS] =
  {"M114", M114_Handler},
  {"M105", M105_Handler},
  {"M104", M104_Handler},
+ {"G91", G91_Handler},
  {"NONE", NULL},
  {"NONE", NULL},
  {"NONE", NULL},
@@ -43,8 +44,7 @@ GcodeHandler_t GcodeHandlers[MAX_HANDLERS] =
  {"NONE", NULL},
  {"NONE", NULL},
  {"NONE", NULL},
- {"NONE", NULL},
- {"NONE", NULL},
+ {"NONE", Letters_Handler},
 };
 
 /*INTERPRETER TASK--------------------------------------------------------------------------------------*/
@@ -53,7 +53,6 @@ void prvInterpreter_Task(void *args)
     struct sPacket packet;
     struct sToken tokens[MAX_TOKENS];
     uint32_t count;
-    uint32_t i;
 
     while(1)
     {
@@ -67,6 +66,8 @@ void prvInterpreter_Task(void *args)
         if(count)
         {
             /*Parse and run block if valid tokens were found*/
+            uint32_t i;
+            uint32_t match = 0;
             for(i = 0; i < count; i++)
             {
                 //compare this token to all possible gcodes on the list
@@ -75,11 +76,16 @@ void prvInterpreter_Task(void *args)
                 {
                     if(strcmp(GcodeHandlers[j].command, tokens[i].token) == 0)
                     {
+                        match = 1;
                         GcodeHandlers[j].handler(count, tokens);
                     }
                 }
 
                 //if none match then this might be a new coordinates or spindle velocity
+                if(!match)
+                {
+                    GcodeHandlers[MAX_HANDLERS - 1].handler(count, tokens);
+                }
             }
         }
         else

@@ -40,6 +40,11 @@ void G28_Handler(uint32_t count, Token_t *tokens)
 
 }
 
+void G91_Handler(uint32_t count, Token_t *tokens)
+{
+
+}
+
 void G92_Handler(uint32_t count, Token_t *tokens)
 {
 
@@ -62,7 +67,8 @@ void M104_Handler(uint32_t count, Token_t *tokens)
 
 void M105_Handler(uint32_t count, Token_t *tokens)
 {
-
+    float t = Extruder_GetTemperature(EXTRUDER0);
+    MSPrintf(UART0, "ok T:%f, B:0.0\n", t);
 }
 
 void M109_Handler(uint32_t count, Token_t *tokens)
@@ -76,6 +82,11 @@ void M106_Handler(uint32_t count, Token_t *tokens)
 }
 
 void M114_Handler(uint32_t count, Token_t *tokens)
+{
+
+}
+
+void Letters_Handler(uint32_t count, Token_t *tokens)
 {
 
 }

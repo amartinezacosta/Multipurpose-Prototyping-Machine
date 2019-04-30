@@ -92,7 +92,7 @@ uint32_t getToken(Token_t *token, char *string)
 
     else if(*string == '\r' || *string == '\n')
     {
-        token->token[i++] = *string++;
+        string++;
     }
 
     token->token[i] = 0;
