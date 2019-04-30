@@ -5,7 +5,6 @@
 #include "task.h"
 #include "queue.h"
 #include "communications.h"
-#include "lexer.h"
 #include "parser.h"
 #include "config.h"
 #include "Devices/MSPIO.h"
@@ -13,6 +12,7 @@
 #include "motion.h"
 #include "Devices/Extruder.h"
 #include "default.h"
+#include "token.h"
 
 #define MAX_HANDLERS        40
 

@@ -15,11 +15,11 @@ uint32_t handler_count = 20;
 
 GcodeHandler_t GcodeHandlers[MAX_HANDLERS] =
 {
- {"G00", G00_Handler},
- {"G01", G01_Handler},
- {"G02", G02_Handler},
- {"G03", G03_Handler},
- {"G04", G04_Handler},
+ {"G0", G00_Handler},
+ {"G1", G01_Handler},
+ {"G2", G02_Handler},
+ {"G3", G03_Handler},
+ {"G4", G04_Handler},
  {"G28", G28_Handler},
  {"G92", G92_Handler},
  {"M3", M03_Handler},
@@ -60,14 +60,13 @@ void prvInterpreter_Task(void *args)
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
         /*At this point we know there is something on the queue, no point in checking*/
         xQueueReceive(Communications_GetPacketQueue(), &packet, portMAX_DELAY);
-
+        MSPrintf(UART0, "//%s\n", packet.data);
         /*Perform lexical and syntax analysis on received data*/
         count = lexer(tokens, packet.data);
         if(count)
         {
             /*Parse and run block if valid tokens were found*/
             uint32_t i;
-            uint32_t match = 0;
             for(i = 0; i < count; i++)
             {
                 //compare this token to all possible gcodes on the list
@@ -76,22 +75,15 @@ void prvInterpreter_Task(void *args)
                 {
                     if(strcmp(GcodeHandlers[j].command, tokens[i].token) == 0)
                     {
-                        match = 1;
                         GcodeHandlers[j].handler(count, tokens);
                     }
-                }
-
-                //if none match then this might be a new coordinates or spindle velocity
-                if(!match)
-                {
-                    GcodeHandlers[MAX_HANDLERS - 1].handler(count, tokens);
                 }
             }
         }
         else
         {
             /*No valid tokens were found*/
-            MSPrintf(UART0, "Error: Unknown command: %s\n", packet.data);
+            MSPrintf(UART0, "Error: Unknown command %s\n", packet.data);
         }
     }
 

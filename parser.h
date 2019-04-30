@@ -2,8 +2,8 @@
 #define PARSER_H_
 
 #include <stdint.h>
-#include "lexer.h"
 #include "config.h"
+#include "token.h"
 
 #define RAPID_POSITIONING           0
 #define FEEDRATE_POSITIONING        1

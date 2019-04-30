@@ -1,5 +1,5 @@
-#ifndef LEXER_H_
-#define LEXER_H_
+#ifndef TOKEN_H_
+#define TOKEN_H_
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -15,4 +15,4 @@ typedef struct sToken
 
 uint32_t lexer(Token_t *tokens, char *string);
 
-#endif /* LEXER_H_ */
+#endif /* TOKEN_H_ */

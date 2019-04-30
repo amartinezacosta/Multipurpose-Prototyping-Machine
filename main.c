@@ -29,18 +29,6 @@ void main(void){
     //Open Extruder 1
     Extruder_Open(EXTRUDER0);
 
-    //Open Laser Module 0
-    //Laser_Open(LASER0);
-    //Laser_SetIntensity(LASER0, 5000);
-
-    //Open Hetbed PWM module
-    //PWM_Open(PWM1);
-    //PWM_SetDutyCycle(PWM1, 24000);
-
-    //Open Fan 0, set speed to 75%
-    //Fan_Open(FAN0);
-    //Fan_SetRPM(FAN0, 36000);
-
     //Create tasks
     xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY+1, Interpreter_GetTaskHandle());
     xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY+2, Interpolator_GetTaskHandle());

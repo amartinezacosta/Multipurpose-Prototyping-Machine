@@ -1,4 +1,4 @@
-#include "lexer.h"
+#include <token.h>
 
 bool is_special(const char c)
 {
