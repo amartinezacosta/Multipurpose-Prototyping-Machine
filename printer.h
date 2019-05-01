@@ -27,8 +27,8 @@ struct sPrinter
     uint32_t non_modal;
     float new_coordinates[AXIS_COUNT];
     float current_coordinates[AXIS_COUNT];
-    uint32_t feedrate;
-    uint32_t spindle;
+    float feedrate;
+    float spindle;
     uint32_t status;
     QueueHandle_t motion_queue;
 };

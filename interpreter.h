@@ -13,13 +13,14 @@
 #include "Devices/Extruder.h"
 #include "default.h"
 #include "token.h"
+#include "parameters.h"
 
 #define MAX_HANDLERS        40
 
 typedef struct sGcodeHandler
 {
     char *command;
-    void (*handler)(uint32_t, Token_t*);
+    void (*handler)(Parameters_t *params);
 }GcodeHandler_t;
 
 void prvInterpreter_Task(void *args);

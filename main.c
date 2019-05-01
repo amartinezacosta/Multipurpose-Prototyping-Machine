@@ -6,6 +6,7 @@
 #include "Devices/button.h"
 #include "Devices/extruder.h"
 #include "Devices/laser.h"
+#include "Devices/lcd2004.h"
 
 void main(void){
     //Initialize printer variables
@@ -26,13 +27,16 @@ void main(void){
     Button_Open(Y_ENDSTOP_BUTTON, ENDSTOP);
     Button_Open(Z_ENDSTOP_BUTTON, ENDSTOP);
 
-    //Open Extruder 1
+    //Open Extruder 0
     Extruder_Open(EXTRUDER0);
+
+    //Initialize LCD
+    lcdInit();
 
     //Create tasks
     xTaskCreate(prvInterpreter_Task, "Interpreter", 512, NULL, tskIDLE_PRIORITY+1, Interpreter_GetTaskHandle());
     xTaskCreate(prvInterpolator_Task, "Interpolator", 128, NULL, tskIDLE_PRIORITY+2, Interpolator_GetTaskHandle());
-    xTaskCreate(prvSystemControl_Task, "Control", 128, NULL, tskIDLE_PRIORITY, Control_GetTaskHandle());
+    xTaskCreate(prvSystemControl_Task, "Control", 256, NULL, tskIDLE_PRIORITY, Control_GetTaskHandle());
 
     MSPrintf(UART0, "start\n");
 

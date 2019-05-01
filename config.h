@@ -1,8 +1,8 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-#define MAX_FEEDRATE            10000
-#define MIN_FEEDRATE            10
+#define MAX_FEEDRATE            10000.0
+#define MIN_FEEDRATE            10.0
 
 #define AXIS_COUNT              4
 #define STEPS_PER_MM            {80.0, 80.0, 400.0, 56.0}

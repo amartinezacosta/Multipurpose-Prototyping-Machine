@@ -38,10 +38,10 @@ void Printer_Set(uint32_t param1, uint32_t param2, void *value)
         Printer.new_coordinates[param2] = *(float*)value;
         break;
     case FEEDRATE:
-        Printer.feedrate = *(uint32_t*)value;
+        Printer.feedrate = *(float*)value;
         break;
     case SPINDLE:
-        Printer.spindle = *(uint32_t*)value;
+        Printer.spindle = *(float*)value;
         break;
     case MODAL:
         Printer.modal[param2] = *(uint32_t*)value;

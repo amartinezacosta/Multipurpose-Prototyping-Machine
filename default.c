@@ -5,55 +5,26 @@
 #define MODAL_t         *(uint32_t*)
 #define COORDINATES_t   (float*)
 
-void G00_Handler(uint32_t count, Token_t *tokens)
+void G00_Handler(Parameters_t *params)
 {
-    Printer_Set(MODAL, 0, RAPID_POSITIONING);
-
-    float coordinates[AXIS_COUNT] = {0.0};
-    uint32_t axis_flags = 0;
-
-    //extract coordinates from tokens, if any
-    uint32_t i;
-    for(i = 1; i < count; i++)
-    {
-        switch(tokens[i].token[0])
-        {
-        case 'X':
-            axis_flags |= BIT_SHIFT(0);
-            coordinates[0] = atof(tokens[i].token + 1);
-            break;
-        case 'Y':
-            axis_flags |= BIT_SHIFT(1);
-            coordinates[1] = atof(tokens[i].token + 1);
-            break;
-        case 'Z':
-            axis_flags |= BIT_SHIFT(2);
-            coordinates[2] = atof(tokens[i].token + 1);
-            break;
-        case 'E':
-            axis_flags |= BIT_SHIFT(3);
-            coordinates[3] = atof(tokens[i].token + 1);
-            break;
-        }
-    }
+    uint32_t modal = RAPID_POSITIONING;
+    Printer_Set(MODAL, 0, &modal);
 
     //if there are not commands to be handled then return
-    if(!axis_flags)
+    if(!params->axis_flags)
     {
         MSPrintf(UART0, "ok\n");
         return;
     }
 
     //Check G20, G21
+    uint32_t i;
     if((MODAL_t Printer_Get(MODAL, 6)) == INCHES)
     {
         // modify axis
         for(i = 0; i < AXIS_COUNT; i++)
         {
-            if(axis_flags & BIT_SHIFT(i))
-            {
-                coordinates[i] *= 2.54;
-            }
+            params->coordinates[i] *= 2.54;
         }
     }
 
@@ -65,73 +36,49 @@ void G00_Handler(uint32_t count, Token_t *tokens)
 
         for(i = 0; i < AXIS_COUNT; i++)
         {
-            if(axis_flags & BIT_SHIFT(i))
-            {
-                coordinates[i] += current_coordinates[i];
-            }
+            params->coordinates[i] += current_coordinates[i];
+        }
+    }
+
+    //Change coordinates only if there was an axis command
+    for(i = 0; i < AXIS_COUNT; i++)
+    {
+        if(params->axis_flags & BIT_SHIFT(i))
+        {
+            Printer_Set(NEW_COORDINATE, i, &params->coordinates[i]);
         }
     }
 
     //Prepare motion, will block if queue is full
-    Motion_Linear(coordinates, MAX_FEEDRATE);
+    Motion_Linear(Printer_Get(NEW_COORDINATES, NULL), MAX_FEEDRATE);
     MSPrintf(UART0, "ok\n");
 }
 
-void G01_Handler(uint32_t count, Token_t *tokens)
+void G01_Handler(Parameters_t *params)
 {
     uint32_t modal = FEEDRATE_POSITIONING;
     Printer_Set(MODAL, 0, &modal);
 
-    float coordinates[AXIS_COUNT] = {0.0};
-    uint32_t feedrate;
-    uint32_t axis_flags = 0;
-
-    //extract coordinates from tokens, if any
-    uint32_t i;
-    for(i = 1; i < count; i++)
-    {
-        switch(tokens[i].token[0])
-        {
-        case 'X':
-            axis_flags |= BIT_SHIFT(0);
-            coordinates[0] = atof(tokens[i].token + 1);
-            break;
-        case 'Y':
-            axis_flags |= BIT_SHIFT(1);
-            coordinates[1] = atof(tokens[i].token + 1);
-            break;
-        case 'Z':
-            axis_flags |= BIT_SHIFT(2);
-            coordinates[2] = atof(tokens[i].token + 1);
-            break;
-        case 'E':
-            axis_flags |= BIT_SHIFT(3);
-            coordinates[3] = atof(tokens[i].token + 1);
-            break;
-        case 'F':
-            feedrate = atoi(tokens[i].token + 1);
-            Printer_Set(FEEDRATE, NULL, &feedrate);
-            break;
-        }
-    }
-
     //if there are not commands to be handled then return
-    if(!axis_flags)
+    if(!params->axis_flags)
     {
         MSPrintf(UART0, "ok\n");
         return;
     }
 
+    if((params->f > MIN_FEEDRATE) && (params->f < MAX_FEEDRATE))
+    {
+        Printer_Set(FEEDRATE, NULL, &params->f);
+    }
+
     //Check G20, G21
+    uint32_t i;
     if((MODAL_t Printer_Get(MODAL, 6)) == INCHES)
     {
         // modify axis
         for(i = 0; i < AXIS_COUNT; i++)
         {
-            if(axis_flags & BIT_SHIFT(i))
-            {
-                coordinates[i] *= 2.54;
-            }
+            params->coordinates[i] *= 2.54;
         }
     }
 
@@ -143,110 +90,143 @@ void G01_Handler(uint32_t count, Token_t *tokens)
 
         for(i = 0; i < AXIS_COUNT; i++)
         {
-            if(axis_flags & BIT_SHIFT(i))
-            {
-                coordinates[i] += current_coordinates[i];
-            }
+            params->coordinates[i] += current_coordinates[i];
+        }
+    }
+
+    //Change coordinates only if there was an axis command
+    for(i = 0; i < AXIS_COUNT; i++)
+    {
+        if(params->axis_flags & BIT_SHIFT(i))
+        {
+            Printer_Set(NEW_COORDINATE, i, &params->coordinates[i]);
         }
     }
 
     //Prepare motion, will block if queue is full
-    Motion_Linear(coordinates, *(uint32_t*)Printer_Get(FEEDRATE, NULL));
+    Motion_Linear(Printer_Get(NEW_COORDINATES, NULL), *(float*)Printer_Get(FEEDRATE, NULL));
     MSPrintf(UART0, "ok\n");
 }
 
-void G02_Handler(uint32_t count, Token_t *tokens)
+void G02_Handler(Parameters_t *params)
 {
-
+    MSPrintf(UART0, "ok\n");
 }
 
-void G03_Handler(uint32_t count, Token_t *tokens)
+void G03_Handler(Parameters_t *params)
 {
-
+    MSPrintf(UART0, "ok\n");
 }
 
-void G04_Handler(uint32_t count, Token_t *tokens)
+void G04_Handler(Parameters_t *params)
 {
-
+    MSPrintf(UART0, "ok\n");
 }
 
-void G20_Handler(uint32_t count, Token_t *tokens)
-{
-    uint32_t modal = MILIMETERS;
-    Printer_Set(MODAL, 6, &modal);
-}
-
-void G21_Handler(uint32_t count, Token_t *tokens)
+void G20_Handler(Parameters_t *params)
 {
     uint32_t modal = INCHES;
     Printer_Set(MODAL, 6, &modal);
+    MSPrintf(UART0, "ok\n");
 }
 
-void G28_Handler(uint32_t count, Token_t *tokens)
+void G21_Handler(Parameters_t *params)
 {
-
+    uint32_t modal = MILIMETERS;
+    Printer_Set(MODAL, 6, &modal);
+    MSPrintf(UART0, "ok\n");
 }
 
-void G90_Handler(uint32_t count, Token_t *tokens)
+void G28_Handler(Parameters_t *params)
+{
+    uint32_t axis_flags = 0;
+
+    if(params->axis_flags == 0)
+    {
+        //home all axis
+        axis_flags = 7;
+    }
+
+    Motion_Home(axis_flags);
+    MSPrintf(UART0, "ok\n");
+}
+
+void G90_Handler(Parameters_t *params)
 {
     uint32_t modal = ABSOLUTE;
     Printer_Set(MODAL, 3, &modal);
+    MSPrintf(UART0, "ok\n");
 }
 
-void G91_Handler(uint32_t count, Token_t *tokens)
+void G91_Handler(Parameters_t *params)
 {
     uint32_t modal = INCREMENTAL;
     Printer_Set(MODAL, 3, &modal);
+    MSPrintf(UART0, "ok\n");
 }
 
-void G92_Handler(uint32_t count, Token_t *tokens)
+void G92_Handler(Parameters_t *params)
 {
-
+    MSPrintf(UART0, "ok\n");
 }
 
-void M03_Handler(uint32_t count, Token_t *tokens)
+void M03_Handler(Parameters_t *params)
 {
-
+    MSPrintf(UART0, "ok\n");
 }
 
-void M04_Handler(uint32_t count, Token_t *tokens)
+void M04_Handler(Parameters_t *params)
 {
-
+    MSPrintf(UART0, "ok\n");
 }
 
-void M104_Handler(uint32_t count, Token_t *tokens)
+void M104_Handler(Parameters_t *params)
 {
-
+    MSPrintf(UART0, "ok\n");
 }
 
-void M105_Handler(uint32_t count, Token_t *tokens)
+void M105_Handler(Parameters_t *params)
 {
     float t = Extruder_GetTemperature(EXTRUDER0);
     MSPrintf(UART0, "ok T:%f, B:0.0\n", t);
 }
 
-void M109_Handler(uint32_t count, Token_t *tokens)
+void M109_Handler(Parameters_t *params)
 {
-
+    MSPrintf(UART0, "ok\n");
 }
 
-void M106_Handler(uint32_t count, Token_t *tokens)
+void M106_Handler(Parameters_t *params)
 {
-
+    MSPrintf(UART0, "ok\n");
 }
 
-void M114_Handler(uint32_t count, Token_t *tokens)
+void M114_Handler(Parameters_t *params)
 {
     float *coordinates = (float*)Printer_Get(CURRENT_COORDINATES, NULL);
     float *new = (float*)Printer_Get(NEW_COORDINATES, NULL);
-    MSPrintf(UART0, "//ok C: X:%f Y:%f Z:%f E:%f NX:%f NY:%f NZ:%f, NE:%f\n",
+    MSPrintf(UART0, "ok C: X:%f Y:%f Z:%f E:%f NX:%f NY:%f NZ:%f, NE:%f\n",
              coordinates[0], coordinates[1], coordinates[2], coordinates[3],
              new[0], new[1], new[2], new[3]);
 }
 
-void Letters_Handler(uint32_t count, Token_t *tokens)
+void M110_Handler(Parameters_t *params)
 {
-
+    //Set current line
+    MSPrintf(UART0, "ok\n");
 }
+
+void M107_Handler(Parameters_t *params)
+{
+    //Shut down fan
+    MSPrintf(UART0, "ok\n");
+}
+
+void M82_Handler(Parameters_t *params)
+{
+    //Set extruder to absolute
+    MSPrintf(UART0, "ok\n");
+}
+
 
 

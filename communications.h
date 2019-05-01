@@ -11,11 +11,11 @@
 #define QUEUE_DELAY         288000000
 #define PACKETS_QUEUE_SIZE  20
 
-struct sPacket
+typedef struct sPacket
 {
     uint32_t id;
     char data[PACKET_SIZE];
-};
+}Packet_t;
 
 void prvCommunications_Task(void *args);
 QueueHandle_t Communications_GetPacketQueue(void);

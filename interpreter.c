@@ -29,6 +29,13 @@ GcodeHandler_t GcodeHandlers[MAX_HANDLERS] =
  {"M105", M105_Handler},
  {"M104", M104_Handler},
  {"G91", G91_Handler},
+ {"M110", M110_Handler},
+ {"M107", M107_Handler},
+ {"G21", G21_Handler},
+ {"G20", G20_Handler},
+ {"G90", G90_Handler},
+ {"M82", M82_Handler},
+ {"M106", M106_Handler},
  {"NONE", NULL},
  {"NONE", NULL},
  {"NONE", NULL},
@@ -38,21 +45,16 @@ GcodeHandler_t GcodeHandlers[MAX_HANDLERS] =
  {"NONE", NULL},
  {"NONE", NULL},
  {"NONE", NULL},
- {"NONE", NULL},
- {"NONE", NULL},
- {"NONE", NULL},
- {"NONE", NULL},
- {"NONE", NULL},
- {"NONE", NULL},
- {"NONE", Letters_Handler},
 };
+
 
 /*INTERPRETER TASK--------------------------------------------------------------------------------------*/
 void prvInterpreter_Task(void *args)
 {
-    struct sPacket packet;
-    struct sToken tokens[MAX_TOKENS];
+    Packet_t packet;
+    Token_t tokens[MAX_TOKENS];
     uint32_t count;
+    Parameters_t params;
 
     while(1)
     {
@@ -65,8 +67,46 @@ void prvInterpreter_Task(void *args)
         count = lexer(tokens, packet.data);
         if(count)
         {
-            /*Parse and run block if valid tokens were found*/
             uint32_t i;
+            memset(&params, 0, sizeof(Parameters_t));
+
+            /*Pre-process to find x, y, z, e, s, t and p values*/
+            for(i= 0; i < count; i++)
+            {
+                switch(tokens[i].token[0])
+                {
+                case 'X':
+                    params.axis_flags |= BIT_SHIFT(0);
+                    params.coordinates[0] = atof(tokens[i].token + 1);
+                    break;
+                case 'Y':
+                    params.axis_flags |= BIT_SHIFT(1);
+                    params.coordinates[1] = atof(tokens[i].token + 1);
+                    break;
+                case 'Z':
+                    params.axis_flags |= BIT_SHIFT(2);
+                    params.coordinates[2] = atof(tokens[i].token + 1);
+                    break;
+                case 'E':
+                    params.axis_flags |= BIT_SHIFT(3);
+                    params.coordinates[3] = atof(tokens[i].token + 1);
+                    break;
+                case 'S':
+                    params.s = atof(tokens[i].token + 1);
+                    break;
+                case 'P':
+                    params.p = atof(tokens[i].token + 1);
+                    break;
+                case 'F':
+                    params.f = atof(tokens[i].token + 1);
+                    break;
+                case 'N':
+                    //set line number
+                    break;
+                }
+            }
+
+            /*Parse and run block if valid tokens were found*/
             for(i = 0; i < count; i++)
             {
                 //compare this token to all possible gcodes on the list
@@ -75,7 +115,7 @@ void prvInterpreter_Task(void *args)
                 {
                     if(strcmp(GcodeHandlers[j].command, tokens[i].token) == 0)
                     {
-                        GcodeHandlers[j].handler(count, tokens);
+                        GcodeHandlers[j].handler(&params);
                     }
                 }
             }
@@ -95,7 +135,7 @@ TaskHandle_t *Interpreter_GetTaskHandle(void)
     return &xInterpreter_Task;
 }
 
-void Interpreter_AddHandler(char *command, void(*handler)(uint32_t, Token_t*))
+void Interpreter_AddHandler(char *command, void(*handler)(Parameters_t*))
 {
     if(handler_count < MAX_HANDLERS)
     {
